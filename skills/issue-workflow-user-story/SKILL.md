@@ -1,5 +1,5 @@
 ---
-name: create-user-story
+name: issue-workflow-user-story
 description: 在里程碑下创建用户故事 Issue。用于将需求拆分为面向用户的功能。Create a user story issue under a milestone.
 ---
 
@@ -9,7 +9,7 @@ description: 在里程碑下创建用户故事 Issue。用于将需求拆分为�
 
 ## 流程
 
-1. **检测仓库**（同 create-milestone）
+1. **检测仓库**（同 issue-workflow-milestone）
 
 2. **确定里程碑**
    - 如果上下文中有：直接使用

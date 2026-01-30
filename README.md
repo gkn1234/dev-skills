@@ -60,44 +60,44 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 
 ## Usage
 
-**Sub-commands:**
+**Skills:**
 
-| Command | Purpose |
-|---------|---------|
+| Skill | Purpose |
+|-------|---------|
 | `/dev-skills:issue-workflow` | Workflow overview |
-| `/dev-skills:issue-workflow:create-milestone` | Create GitHub milestone |
-| `/dev-skills:issue-workflow:create-user-story` | Create user story issue |
-| `/dev-skills:issue-workflow:create-design` | Create design issue |
-| `/dev-skills:issue-workflow:create-task` | Create task issue |
-| `/dev-skills:issue-workflow:create-test-cases` | Create test cases issue |
+| `/dev-skills:issue-workflow-milestone` | Create GitHub milestone |
+| `/dev-skills:issue-workflow-user-story` | Create user story issue |
+| `/dev-skills:issue-workflow-design` | Create design issue |
+| `/dev-skills:issue-workflow-task` | Create task issue |
+| `/dev-skills:issue-workflow-test-cases` | Create test cases issue |
 
 **Typical Workflow:**
 
 1. **Create milestone**: Create a milestone for new requirements
    ```
-   /dev-skills:issue-workflow:create-milestone
+   /dev-skills:issue-workflow-milestone
    ```
 
 2. **Create user story**: Break down requirements into user stories
    ```
-   /dev-skills:issue-workflow:create-user-story
+   /dev-skills:issue-workflow-user-story
    ```
 
 3. **Design phase**: Complete design with brainstorming, then create Design Issue
    ```
    /superpowers:brainstorming
-   /dev-skills:issue-workflow:create-design
+   /dev-skills:issue-workflow-design
    ```
 
 4. **Task breakdown**: Write plan with writing-plans, then create Task Issue
    ```
    /superpowers:writing-plans
-   /dev-skills:issue-workflow:create-task
+   /dev-skills:issue-workflow-task
    ```
 
 5. **Create test cases**: Create acceptance test cases for the task
    ```
-   /dev-skills:issue-workflow:create-test-cases
+   /dev-skills:issue-workflow-test-cases
    ```
 
 ## License

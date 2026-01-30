@@ -1,5 +1,5 @@
 ---
-name: create-design
+name: issue-workflow-design
 description: 创建与用户故事关联的设计文档 Issue。在使用 superpowers:brainstorming 完成设计后使用。Create a design issue linked to a user story.
 ---
 

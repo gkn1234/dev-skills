@@ -17,20 +17,20 @@ Milestone → User Story → Design → Task → Test Cases
     └── GitHub 原生里程碑功能
 ```
 
-## 子命令
+## 相关技能
 
-| 命令 | 用途 |
+| 技能 | 用途 |
 |------|------|
-| `create-milestone` | 创建 GitHub 里程碑 |
-| `create-user-story` | 创建用户故事 Issue |
-| `create-design` | 创建设计文档 Issue（配合 `superpowers:brainstorming`）|
-| `create-task` | 创建任务 Issue（配合 `superpowers:writing-plans`）|
-| `create-test-cases` | 创建测试用例 Issue |
+| `issue-workflow-milestone` | 创建 GitHub 里程碑 |
+| `issue-workflow-user-story` | 创建用户故事 Issue |
+| `issue-workflow-design` | 创建设计文档 Issue（配合 `superpowers:brainstorming`）|
+| `issue-workflow-task` | 创建任务 Issue（配合 `superpowers:writing-plans`）|
+| `issue-workflow-test-cases` | 创建测试用例 Issue |
 
 ## 工作流集成
 
-1. **设计阶段**：先使用 `/superpowers:brainstorming` 完成设计，再使用 `create-design`
-2. **任务阶段**：先使用 `/superpowers:writing-plans` 编写计划，再使用 `create-task`
+1. **设计阶段**：先使用 `/superpowers:brainstorming` 完成设计，再使用 `issue-workflow-design`
+2. **任务阶段**：先使用 `/superpowers:writing-plans` 编写计划，再使用 `issue-workflow-task`
 
 ## 自动行为
 

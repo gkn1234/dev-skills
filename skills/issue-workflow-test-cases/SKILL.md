@@ -1,5 +1,5 @@
 ---
-name: create-test-cases
+name: issue-workflow-test-cases
 description: 创建与任务关联的测试用例 Issue。用自然语言生成验收测试用例。Create a test cases issue linked to a task.
 ---
 

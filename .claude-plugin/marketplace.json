@@ -15,7 +15,12 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./issue-workflow"
+        "./skills/issue-workflow",
+        "./skills/issue-workflow-milestone",
+        "./skills/issue-workflow-user-story",
+        "./skills/issue-workflow-design",
+        "./skills/issue-workflow-task",
+        "./skills/issue-workflow-test-cases"
       ]
     }
   ]

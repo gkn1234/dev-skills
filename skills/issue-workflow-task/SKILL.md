@@ -1,5 +1,5 @@
 ---
-name: create-task
+name: issue-workflow-task
 description: 创建与设计文档关联的任务 Issue。在使用 superpowers:writing-plans 完成实现计划后使用。Create a task issue linked to a design.
 ---
 

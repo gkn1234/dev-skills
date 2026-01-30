@@ -1,5 +1,5 @@
 ---
-name: create-milestone
+name: issue-workflow-milestone
 description: 创建 GitHub 里程碑，用于管理大需求。当开始新项目阶段或功能集时使用。Create a GitHub milestone for managing a large requirement.
 ---
 

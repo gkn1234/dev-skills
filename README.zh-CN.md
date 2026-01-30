@@ -60,44 +60,44 @@ claude plugin update dev-skills@dev-skills
 
 ## 使用方法
 
-**子命令列表：**
+**技能列表：**
 
-| 命令 | 用途 |
+| 技能 | 用途 |
 |------|------|
 | `/dev-skills:issue-workflow` | 查看流程概览 |
-| `/dev-skills:issue-workflow:create-milestone` | 创建 GitHub 里程碑 |
-| `/dev-skills:issue-workflow:create-user-story` | 创建用户故事 Issue |
-| `/dev-skills:issue-workflow:create-design` | 创建设计文档 Issue |
-| `/dev-skills:issue-workflow:create-task` | 创建任务 Issue |
-| `/dev-skills:issue-workflow:create-test-cases` | 创建测试用例 Issue |
+| `/dev-skills:issue-workflow-milestone` | 创建 GitHub 里程碑 |
+| `/dev-skills:issue-workflow-user-story` | 创建用户故事 Issue |
+| `/dev-skills:issue-workflow-design` | 创建设计文档 Issue |
+| `/dev-skills:issue-workflow-task` | 创建任务 Issue |
+| `/dev-skills:issue-workflow-test-cases` | 创建测试用例 Issue |
 
 **典型工作流：**
 
 1. **创建里程碑**：为新需求创建里程碑
    ```
-   /dev-skills:issue-workflow:create-milestone
+   /dev-skills:issue-workflow-milestone
    ```
 
 2. **创建用户故事**：将需求拆分为用户故事
    ```
-   /dev-skills:issue-workflow:create-user-story
+   /dev-skills:issue-workflow-user-story
    ```
 
 3. **设计阶段**：使用 brainstorming 完成设计，然后创建 Design Issue
    ```
    /superpowers:brainstorming
-   /dev-skills:issue-workflow:create-design
+   /dev-skills:issue-workflow-design
    ```
 
 4. **任务拆分**：使用 writing-plans 编写计划，然后创建 Task Issue
    ```
    /superpowers:writing-plans
-   /dev-skills:issue-workflow:create-task
+   /dev-skills:issue-workflow-task
    ```
 
 5. **创建测试用例**：为任务创建验收测试用例
    ```
-   /dev-skills:issue-workflow:create-test-cases
+   /dev-skills:issue-workflow-test-cases
    ```
 
 ## License
