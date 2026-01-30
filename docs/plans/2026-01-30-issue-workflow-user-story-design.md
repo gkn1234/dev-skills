@@ -1,3 +1,21 @@
+# issue-workflow-user-story 优化设计
+
+## 背景
+
+对比 obra/superpowers 技能库，优化 `issue-workflow-user-story` 技能，使其更符合最佳实践。
+
+## 设计目标
+
+- 提供用户故事编写的逐步引导
+- 遵循业界最佳实践（INVEST 原则）
+- 支持快速确认和深入探索两种模式
+- 与上下游技能无缝衔接
+
+---
+
+## 完整 SKILL.md
+
+```markdown
 ---
 name: issue-workflow-user-story
 description: 当用户想要添加新功能（"我想加个..."、"需要一个..."）、拆分里程碑为具体功能、或明确提到"用户故事"/"user story"时使用
@@ -133,3 +151,4 @@ D. 其他（请描述）
 | 上游 | `issue-workflow-milestone` | 通常先创建里程碑 |
 | 下游 | `issue-workflow-design` | 创建后引导做设计 |
 | 关联 | `issue-workflow-test-cases` | 验收标准由此填充 |
+```
