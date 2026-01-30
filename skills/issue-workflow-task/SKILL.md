@@ -1,93 +1,145 @@
 ---
 name: issue-workflow-task
-description: 创建与设计文档关联的任务 Issue。在使用 superpowers:writing-plans 完成实现计划后使用。Create a task issue linked to a design.
+description: 当用户完成 writing-plans 计划、从设计文档继续流程、或明确提到"创建任务"/"task issue"时使用
 ---
 
 # 创建任务
 
-创建任务 Issue 并关联到设计文档。
+## Overview
+
+将实现计划记录为 GitHub Issue，并建立与设计文档、用户故事的追踪关联。支持引用已有计划文档或直接描述任务。
+
+## 好的任务标准
+
+| 原则 | 含义 | 检查点 |
+|------|------|--------|
+| **目标明确** | 做什么 | 任务目标清晰具体 |
+| **范围合理** | 多大 | 1-3 天内可完成 |
+| **可验证** | 怎么算完成 | 有明确的完成标准 |
+| **有依赖说明** | 前置条件 | 依赖关系已识别 |
 
 ## 流程
 
-1. **提醒用户**
-   > 在创建 Task Issue 之前，请确保已使用 `/superpowers:writing-plans` 完成实现计划并保存了计划文档。
+### 1. 检测仓库
+- 自动检测 `git remote`
+- 失败则询问用户
 
-2. **检测仓库**
+### 2. 确定设计文档
+- 对话上下文中有：直接使用
+- 参数指定：`--design N`
+- 否则：列出设计文档供选择
 
-3. **确定设计文档**
-   - 如果上下文中有：直接使用
-   - 如果提供了参数：使用 `--design N`
-   - 否则：列出设计文档供选择
-   ```bash
-   gh issue list --label design --json number,title --jq '.[] | "#\(.number): \(.title)"'
-   ```
+### 3. 检查实现计划
 
-4. **确保标签存在**
-   ```bash
-   gh label create task --color FBCA04 --description "实现任务" 2>/dev/null || true
-   ```
+**有现成计划：**
+- 询问计划路径（如 `docs/plans/2026-01-30-xxx.md`）
+- 自动提取任务描述
 
-5. **收集任务详情**
-   - 任务标题/描述
-   - 实现计划路径
+**没有计划：**
+- 提示："建议先使用 `superpowers:writing-plans` 完成计划"
+- 用户坚持继续 → 询问任务描述
 
-6. **从设计文档获取用户故事**
-   ```bash
-   gh issue view {design_number} --json body --jq '.body'
-   ```
-   解析 `## User Story` 部分获取用户故事编号。
+### 4. 质量检查
 
-7. **从设计文档获取里程碑**
-   ```bash
-   gh issue view {design_number} --json milestone --jq '.milestone.number'
-   ```
+创建前检查任务标准：
+- 目标是否明确？
+- 范围是否合理（1-3 天）？
+- 完成标准是否清晰？
 
-8. **创建任务 Issue**
+有问题则提示用户调整。
 
-   ```bash
-   gh issue create \
-     --title "Task: {任务名称}" \
-     --body "内容" \
-     --label task \
-     --milestone N
-   ```
+### 5. 创建 Issue
 
-9. **更新设计文档**（添加到 Tasks 列表）
+确保 `task` 标签存在，创建并关联 Milestone。
 
-   读取当前内容，追加到 Tasks 部分：
-   - 将 `（待创建）` 替换为 `- [ ] #{task_number}`
-   - 或追加 `- [ ] #{task_number}` 到已有列表
+### 6. 双向更新
 
-   ```bash
-   gh issue edit {design_number} --body "新内容"
-   ```
+更新设计文档的 Tasks 列表：添加 `- [ ] #task_number`
 
-10. **报告结果**
-    - 显示任务 Issue 编号和 URL
-    - 确认设计文档已更新
-    - 存入上下文
+### 7. 引导下一步
+
+"任务已创建 (#N) 并关联到设计文档 (#M)。接下来可以使用 `issue-workflow-test-cases` 创建测试用例。"
+
+## Issue 模板
+
+根据用户对话语言自动选择：
+
+**中文模板：**
+```markdown
+## 任务描述
+【定稿：任务目标和范围】
+
+## 实现计划
+📄 [docs/plans/YYYY-MM-DD-xxx.md](./docs/plans/YYYY-MM-DD-xxx.md)
+
+## User Story
+📄 #user_story_number
+
+## Design
+📄 #design_number
+
+## Test Cases
+📄 （待创建，由 issue-workflow-test-cases 关联，格式：#issue_number）
+```
+
+**英文模板：**
+```markdown
+## Task Description
+【定稿：Task goal and scope】
+
+## Implementation Plan
+📄 [docs/plans/YYYY-MM-DD-xxx.md](./docs/plans/YYYY-MM-DD-xxx.md)
+
+## User Story
+📄 #user_story_number
+
+## Design
+📄 #design_number
+
+## Test Cases
+📄 (To be created, linked by issue-workflow-test-cases, format: #issue_number)
+```
+
+> **【定稿】**：流程第 3-4 步中确定的任务描述内容。
+
+## Common Mistakes
+
+| 错误 | 示例 | 正确做法 |
+|------|------|----------|
+| 任务太大 | "实现整个登录系统" | 拆分："实现登录 API"、"实现登录页面" |
+| 描述模糊 | "优化性能" | 具体化："将列表加载时间从 3s 降到 1s" |
+| 没有完成标准 | 只写"做XX" | 添加"完成时应该能XX" |
+| 忘记关联设计 | 孤立的任务 | 必须关联设计文档 |
+| 跳过计划 | 边做边想 | 先完成实现计划 |
 
 ## 示例
 
-使用 writing-plans 完成计划并保存到 `docs/plans/2026-01-30-login-api.md` 后：
+用户完成 writing-plans 后："帮我创建任务 Issue"
 
-```bash
-gh issue create \
-  --title "Task: 实现登录 API 端点" \
-  --body "## 任务描述
-实现 POST /api/auth/login 端点，支持 JWT token 生成。
-
-## 实现计划
-📄 [docs/plans/2026-01-30-login-api.md](./docs/plans/2026-01-30-login-api.md)
-
-## User Story
-📄 #42
-
-## Design
-📄 #43
-
-## Test Cases
-📄 （待创建）" \
-  --label task \
-  --milestone 3
+**有实现计划：**
 ```
+检测到你刚完成了登录 API 的实现计划，文档路径是 docs/plans/2026-01-30-login-api.md。
+
+任务描述：实现 POST /api/auth/login 端点，支持 JWT token 生成和验证。
+
+关联到设计文档 #43，确认创建任务 Issue 吗？
+```
+
+用户确认后 → 质量检查 → 创建 Issue → 更新设计文档
+
+**没有实现计划：**
+```
+还没有实现计划。建议先使用 `superpowers:writing-plans` 完成计划。
+
+如果任务比较简单，也可以直接描述：
+- 任务目标是什么？
+- 预计多久完成？
+```
+
+## 上下游关系
+
+| 方向 | 技能 | 说明 |
+|------|------|------|
+| 上游 | `issue-workflow-design` | 先有设计文档 |
+| 上游 | `superpowers:writing-plans` | 建议先完成计划 |
+| 下游 | `issue-workflow-test-cases` | 创建后添加测试用例 |
