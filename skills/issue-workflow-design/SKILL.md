@@ -39,7 +39,22 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 - 提示："建议先使用 `superpowers:brainstorming` 完成设计"
 - 用户坚持继续 → 询问简要概述
 
-### 4. 质量检查
+### 4. 确保文档已提交
+
+检查设计文档是否已提交到 git：
+```bash
+git ls-files --error-unmatch {doc_path} 2>/dev/null
+```
+
+**未提交：**
+- 提示："设计文档需要先提交到 git，以便生成永久链接"
+- 引导提交：`git add {doc_path} && git commit -m "docs: 添加设计文档"`
+- 获取 commit SHA：`git rev-parse HEAD`
+
+**已提交：**
+- 直接获取包含该文件的 commit SHA
+
+### 5. 质量检查
 
 创建前检查设计文档标准：
 - 有明确目标？
@@ -48,15 +63,15 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 
 有问题则提示用户补充。
 
-### 5. 创建 Issue
+### 6. 创建 Issue
 
 确保 `design` 标签存在，创建并关联 Milestone。
 
-### 6. 双向更新
+### 7. 双向更新
 
 更新用户故事的 Design 字段：`📄 #design_number`
 
-### 7. 引导下一步
+### 8. 引导下一步
 
 "设计文档已创建 (#N) 并关联到用户故事 (#M)。接下来：
 - 使用 `issue-workflow-task` 创建实现任务
@@ -72,7 +87,7 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 【定稿：设计目标和方案概述】
 
 ## 设计文档
-📄 [docs/plans/YYYY-MM-DD-xxx-design.md](./docs/plans/YYYY-MM-DD-xxx-design.md)
+📄 [docs/plans/YYYY-MM-DD-xxx-design.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx-design.md)
 
 ## User Story
 📄 #user_story_number
@@ -87,7 +102,7 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 【定稿：Design goals and solution overview】
 
 ## Design Document
-📄 [docs/plans/YYYY-MM-DD-xxx-design.md](./docs/plans/YYYY-MM-DD-xxx-design.md)
+📄 [docs/plans/YYYY-MM-DD-xxx-design.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx-design.md)
 
 ## User Story
 📄 #user_story_number
@@ -95,6 +110,8 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 ## Tasks
 - [ ] (To be created, linked by issue-workflow-task, format: #issue_number)
 ```
+
+> **永久链接**：使用 `{commit_sha}` 指向特定提交，确保分支删除后链接仍可访问。通过 `git rev-parse HEAD` 获取当前 commit SHA。
 
 > **【定稿】**：流程第 3-4 步中确定的设计概述内容。
 

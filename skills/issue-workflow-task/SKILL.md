@@ -39,7 +39,22 @@ description: 当用户完成 writing-plans 计划、从设计文档继续流程�
 - 提示："建议先使用 `superpowers:writing-plans` 完成计划"
 - 用户坚持继续 → 询问任务描述
 
-### 4. 质量检查
+### 4. 确保文档已提交
+
+检查实现计划是否已提交到 git：
+```bash
+git ls-files --error-unmatch {doc_path} 2>/dev/null
+```
+
+**未提交：**
+- 提示："实现计划需要先提交到 git，以便生成永久链接"
+- 引导提交：`git add {doc_path} && git commit -m "docs: 添加实现计划"`
+- 获取 commit SHA：`git rev-parse HEAD`
+
+**已提交：**
+- 直接获取包含该文件的 commit SHA
+
+### 5. 质量检查
 
 创建前检查任务标准：
 - 目标是否明确？
@@ -48,15 +63,15 @@ description: 当用户完成 writing-plans 计划、从设计文档继续流程�
 
 有问题则提示用户调整。
 
-### 5. 创建 Issue
+### 6. 创建 Issue
 
 确保 `task` 标签存在，创建并关联 Milestone。
 
-### 6. 双向更新
+### 7. 双向更新
 
 更新设计文档的 Tasks 列表：添加 `- [ ] #task_number`
 
-### 7. 引导下一步
+### 8. 引导下一步
 
 "任务已创建 (#N) 并关联到设计文档 (#M)。接下来可以使用 `issue-workflow-test-cases` 创建测试用例。"
 
@@ -70,7 +85,7 @@ description: 当用户完成 writing-plans 计划、从设计文档继续流程�
 【定稿：任务目标和范围】
 
 ## 实现计划
-📄 [docs/plans/YYYY-MM-DD-xxx.md](./docs/plans/YYYY-MM-DD-xxx.md)
+📄 [docs/plans/YYYY-MM-DD-xxx.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx.md)
 
 ## User Story
 📄 #user_story_number
@@ -88,7 +103,7 @@ description: 当用户完成 writing-plans 计划、从设计文档继续流程�
 【定稿：Task goal and scope】
 
 ## Implementation Plan
-📄 [docs/plans/YYYY-MM-DD-xxx.md](./docs/plans/YYYY-MM-DD-xxx.md)
+📄 [docs/plans/YYYY-MM-DD-xxx.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx.md)
 
 ## User Story
 📄 #user_story_number
@@ -99,6 +114,8 @@ description: 当用户完成 writing-plans 计划、从设计文档继续流程�
 ## Test Cases
 📄 (To be created, linked by issue-workflow-test-cases, format: #issue_number)
 ```
+
+> **永久链接**：使用 `{commit_sha}` 指向特定提交，确保分支删除后链接仍可访问。通过 `git rev-parse HEAD` 获取当前 commit SHA。
 
 > **【定稿】**：流程第 3-4 步中确定的任务描述内容。
 
