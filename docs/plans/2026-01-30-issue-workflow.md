@@ -269,51 +269,51 @@ git commit -m "feat(issue-workflow): add bilingual issue templates"
 ```markdown
 ---
 name: issue-workflow
-description: GitHub Issue-based development workflow management. Use for: (1) Creating milestones for large requirements, (2) Breaking down User Stories, (3) Creating Design/Task/Test Cases issues with auto-linking. Triggers on: "create issue", "milestone", "user story", "task breakdown", "研发流程", "里程碑", "用户故事", "任务拆分".
+description: 基于 GitHub Issue 的研发流程管理。用于：(1) 创建里程碑管理大需求，(2) 拆分用户故事，(3) 创建 Design/Task/Test Cases Issue 并自动关联。触发词：create issue, milestone, user story, task breakdown, 研发流程, 里程碑, 用户故事, 任务拆分。
 ---
 
-# Issue Workflow
+# Issue Workflow - 研发流程管理
 
-## Process Overview
+## 流程概览
 
 ```
 Milestone → User Story → Design → Task → Test Cases
     │           │           │        │         │
-    │           │           │        │         └── Acceptance tests (1:1 with Task)
-    │           │           │        └── Implementation units (N:1 with Design)
-    │           │           └── Architecture doc (1:1 with User Story)
-    │           └── Business requirements (N:1 with Milestone)
-    └── GitHub native milestone feature
+    │           │           │        │         └── 验收用例 (与 Task 1:1)
+    │           │           │        └── 实现任务 (与 Design N:1)
+    │           │           └── 设计文档 (与 User Story 1:1)
+    │           └── 用户故事 (与 Milestone N:1)
+    └── GitHub 原生里程碑功能
 ```
 
-## Sub-commands
+## 子命令
 
-| Command | Purpose |
-|---------|---------|
-| `create-milestone` | Create GitHub milestone |
-| `create-user-story` | Create user story issue |
-| `create-design` | Create design issue (use with `superpowers:brainstorming`) |
-| `create-task` | Create task issue (use with `superpowers:writing-plans`) |
-| `create-test-cases` | Create test cases issue |
+| 命令 | 用途 |
+|------|------|
+| `create-milestone` | 创建 GitHub 里程碑 |
+| `create-user-story` | 创建用户故事 Issue |
+| `create-design` | 创建设计文档 Issue（配合 `superpowers:brainstorming`）|
+| `create-task` | 创建任务 Issue（配合 `superpowers:writing-plans`）|
+| `create-test-cases` | 创建测试用例 Issue |
 
-## Workflow Integration
+## 工作流集成
 
-1. **Design Phase**: Use `/superpowers:brainstorming` first, then `create-design`
-2. **Task Phase**: Use `/superpowers:writing-plans` first, then `create-task`
+1. **设计阶段**：先使用 `/superpowers:brainstorming` 完成设计，再使用 `create-design`
+2. **任务阶段**：先使用 `/superpowers:writing-plans` 编写计划，再使用 `create-task`
 
-## Auto Behaviors
+## 自动行为
 
-- **Labels**: Auto-create if missing (`user-story`, `design`, `task`, `test-cases`)
-- **Linking**: Bidirectional links between related issues
-- **Language**: Auto-detect from conversation (zh/en templates)
-- **Repository**: Auto-detect from `git remote`, prompt if not found
+- **标签**：自动检查并创建缺失的标签（`user-story`, `design`, `task`, `test-cases`）
+- **关联**：自动在相关 Issue 间建立双向链接
+- **语言**：根据用户对话语言自动选择模板（中/英文）
+- **仓库**：优先从 `git remote` 自动检测，失败时询问用户
 
-## Priority Rules
+## 优先级规则
 
-For all inputs (milestone, user-story, design, task):
-1. Context from current conversation
-2. Command parameters (e.g., `--milestone 1`)
-3. Query GitHub API and present selection list
+对于所有输入（milestone, user-story, design, task）：
+1. 优先使用当前对话上下文中的信息
+2. 其次使用命令参数（如 `--milestone 1`）
+3. 最后查询 GitHub API 并展示选项列表供选择
 ```
 
 ### Step 2: 提交
@@ -335,53 +335,53 @@ git commit -m "feat(issue-workflow): add main skill entry point"
 ```markdown
 ---
 name: create-milestone
-description: Create a GitHub milestone for managing a large requirement. Use when starting a new project phase or feature set.
+description: 创建 GitHub 里程碑，用于管理大需求。当开始新项目阶段或功能集时使用。Create a GitHub milestone for managing a large requirement.
 ---
 
-# Create Milestone
+# 创建里程碑
 
-Create a GitHub milestone to track a large requirement.
+创建 GitHub 里程碑以追踪大需求。
 
-## Process
+## 流程
 
-1. **Detect repository**
+1. **检测仓库**
    ```bash
    gh repo view --json nameWithOwner -q '.nameWithOwner'
    ```
-   If fails, ask user for `owner/repo`.
+   如果失败，询问用户 `owner/repo`。
 
-2. **Gather information**
-   - Ask for milestone title
-   - Ask for description (optional)
-   - Ask for due date (optional, format: YYYY-MM-DD)
+2. **收集信息**
+   - 询问里程碑标题
+   - 询问描述（可选）
+   - 询问截止日期（可选，格式：YYYY-MM-DD）
 
-3. **Create milestone**
+3. **创建里程碑**
    ```bash
-   gh api repos/{owner}/{repo}/milestones -f title="TITLE" -f description="DESC" -f due_on="DATE"
+   gh api repos/{owner}/{repo}/milestones -f title="标题" -f description="描述" -f due_on="日期"
    ```
 
-   Without due date:
+   不设截止日期时：
    ```bash
-   gh api repos/{owner}/{repo}/milestones -f title="TITLE" -f description="DESC"
+   gh api repos/{owner}/{repo}/milestones -f title="标题" -f description="描述"
    ```
 
-4. **Report result**
-   - Show milestone number and URL
-   - Store in context for subsequent commands
+4. **报告结果**
+   - 显示里程碑编号和 URL
+   - 存入上下文供后续命令使用
 
-## Example
+## 示例
 
-User: "Create a milestone for user authentication feature"
+用户："为用户认证功能创建一个里程碑"
 
 ```bash
 gh api repos/myorg/myrepo/milestones \
-  -f title="User Authentication" \
-  -f description="Implement complete user authentication system including login, registration, and password reset."
+  -f title="用户认证" \
+  -f description="实现完整的用户认证系统，包括登录、注册和密码重置。"
 ```
 
-Output:
+输出：
 ```
-Created Milestone #3: User Authentication
+已创建里程碑 #3: 用户认证
 URL: https://github.com/myorg/myrepo/milestone/3
 ```
 ```
@@ -405,43 +405,43 @@ git commit -m "feat(issue-workflow): add create-milestone sub-skill"
 ```markdown
 ---
 name: create-user-story
-description: Create a user story issue under a milestone. Use when breaking down requirements into user-facing features.
+description: 在里程碑下创建用户故事 Issue。用于将需求拆分为面向用户的功能。Create a user story issue under a milestone.
 ---
 
-# Create User Story
+# 创建用户故事
 
-Create a user story issue with standard format.
+创建标准格式的用户故事 Issue。
 
-## Process
+## 流程
 
-1. **Detect repository** (same as create-milestone)
+1. **检测仓库**（同 create-milestone）
 
-2. **Determine milestone**
-   - If in context: use it
-   - If parameter provided: use `--milestone N`
-   - Otherwise: list milestones and ask
+2. **确定里程碑**
+   - 如果上下文中有：直接使用
+   - 如果提供了参数：使用 `--milestone N`
+   - 否则：列出里程碑供选择
    ```bash
    gh api repos/{owner}/{repo}/milestones --jq '.[] | "\(.number): \(.title)"'
    ```
 
-3. **Ensure label exists**
+3. **确保标签存在**
    ```bash
-   gh label create user-story --color 0052CC --description "User Story" 2>/dev/null || true
+   gh label create user-story --color 0052CC --description "用户故事" 2>/dev/null || true
    ```
 
-4. **Gather story details**
-   - Role: Who is the user?
-   - Action: What do they want to do?
-   - Value: Why do they want it?
+4. **收集故事详情**
+   - 角色：用户是谁？
+   - 行为：想要做什么？
+   - 价值：为什么要这样做？
 
-5. **Create issue**
+5. **创建 Issue**
 
-   Template (auto-detect language from conversation):
+   根据用户对话语言自动选择模板：
 
-   **Chinese:**
+   **中文模板：**
    ```markdown
    ## 用户故事
-   作为一个【role】，我想要【action】，以便【value】。
+   作为一个【角色】，我想要【行为】，以便【价值】。
 
    ## Design
    📄 （待创建）
@@ -450,7 +450,7 @@ Create a user story issue with standard format.
    （待创建）
    ```
 
-   **English:**
+   **英文模板：**
    ```markdown
    ## User Story
    As a 【role】, I want to 【action】, so that 【value】.
@@ -463,33 +463,33 @@ Create a user story issue with standard format.
    ```
 
    ```bash
-   gh issue create --title "TITLE" --body "BODY" --label user-story --milestone N
+   gh issue create --title "标题" --body "内容" --label user-story --milestone N
    ```
 
-6. **Report result**
-   - Show issue number and URL
-   - Store in context
+6. **报告结果**
+   - 显示 Issue 编号和 URL
+   - 存入上下文
 
-## Example
+## 示例
 
-User: "Create a user story for login feature"
+用户："为登录功能创建一个用户故事"
 
-Response:
-- Role? → "registered user"
-- Action? → "log in with email and password"
-- Value? → "access my personal dashboard"
+询问：
+- 角色？→ "已注册用户"
+- 行为？→ "使用邮箱和密码登录"
+- 价值？→ "访问我的个人仪表盘"
 
 ```bash
 gh issue create \
-  --title "User login with email/password" \
-  --body "## User Story
-As a registered user, I want to log in with email and password, so that I can access my personal dashboard.
+  --title "用户使用邮箱/密码登录" \
+  --body "## 用户故事
+作为一个已注册用户，我想要使用邮箱和密码登录，以便访问我的个人仪表盘。
 
 ## Design
-📄 (To be created)
+📄 （待创建）
 
-## Acceptance Criteria
-(To be created)" \
+## 验收标准
+（待创建）" \
   --label user-story \
   --milestone 3
 ```
@@ -514,81 +514,81 @@ git commit -m "feat(issue-workflow): add create-user-story sub-skill"
 ```markdown
 ---
 name: create-design
-description: Create a design issue linked to a user story. Use after completing design with superpowers:brainstorming.
+description: 创建与用户故事关联的设计文档 Issue。在使用 superpowers:brainstorming 完成设计后使用。Create a design issue linked to a user story.
 ---
 
-# Create Design
+# 创建设计文档
 
-Create a design issue and link it to a user story.
+创建设计文档 Issue 并关联到用户故事。
 
-## Process
+## 流程
 
-1. **Remind user**
-   > Before creating a Design issue, ensure you have completed the design using `/superpowers:brainstorming` and saved the design document.
+1. **提醒用户**
+   > 在创建 Design Issue 之前，请确保已使用 `/superpowers:brainstorming` 完成设计并保存了设计文档。
 
-2. **Detect repository**
+2. **检测仓库**
 
-3. **Determine user story**
-   - If in context: use it
-   - If parameter: use `--user-story N`
-   - Otherwise: list user stories and ask
+3. **确定用户故事**
+   - 如果上下文中有：直接使用
+   - 如果提供了参数：使用 `--user-story N`
+   - 否则：列出用户故事供选择
    ```bash
    gh issue list --label user-story --json number,title --jq '.[] | "#\(.number): \(.title)"'
    ```
 
-4. **Ensure label exists**
+4. **确保标签存在**
    ```bash
-   gh label create design --color 0E8A16 --description "Design Document" 2>/dev/null || true
+   gh label create design --color 0E8A16 --description "设计文档" 2>/dev/null || true
    ```
 
-5. **Gather design details**
-   - Design document path (e.g., `docs/plans/2026-01-30-login-design.md`)
-   - Brief summary
+5. **收集设计详情**
+   - 设计文档路径（如 `docs/plans/2026-01-30-login-design.md`）
+   - 简要概述
 
-6. **Get milestone from user story**
+6. **从用户故事获取里程碑**
    ```bash
    gh issue view {user_story_number} --json milestone --jq '.milestone.number'
    ```
 
-7. **Create design issue**
+7. **创建设计 Issue**
 
    ```bash
    gh issue create \
-     --title "Design: {feature_name}" \
-     --body "BODY" \
+     --title "Design: {功能名称}" \
+     --body "内容" \
      --label design \
      --milestone N
    ```
 
-8. **Update user story** (bidirectional link)
+8. **更新用户故事**（双向链接）
 
-   Read current body:
+   读取当前内容：
    ```bash
    gh issue view {user_story_number} --json body --jq '.body'
    ```
 
-   Replace `📄 （待创建）` or `📄 (To be created)` with `📄 #{design_number}`
+   将 `📄 （待创建）` 或 `📄 (To be created)` 替换为 `📄 #{design_number}`
 
    ```bash
-   gh issue edit {user_story_number} --body "NEW_BODY"
+   gh issue edit {user_story_number} --body "新内容"
    ```
 
-9. **Report result**
-   - Show design issue number and URL
-   - Confirm user story was updated
-   - Store in context
+9. **报告结果**
+   - 显示设计 Issue 编号和 URL
+   - 确认用户故事已更新
+   - 存入上下文
 
-## Example
+## 示例
 
-After brainstorming session saved `docs/plans/2026-01-30-login-design.md`:
+使用 brainstorming 完成设计并保存到 `docs/plans/2026-01-30-login-design.md` 后：
 
 ```bash
 gh issue create \
-  --title "Design: User Login System" \
-  --body "## Overview
-JWT-based authentication with refresh token rotation.
+  --title "Design: 用户登录系统" \
+  --body "## 概述
+基于 JWT 的认证系统，支持 refresh token 轮换。
 
-## Design Document
+## 设计文档
 📄 [docs/plans/2026-01-30-login-design.md](./docs/plans/2026-01-30-login-design.md)
 
 ## User Story
@@ -620,84 +620,84 @@ git commit -m "feat(issue-workflow): add create-design sub-skill"
 ```markdown
 ---
 name: create-task
-description: Create a task issue linked to a design. Use after completing implementation plan with superpowers:writing-plans.
+description: 创建与设计文档关联的任务 Issue。在使用 superpowers:writing-plans 完成实现计划后使用。Create a task issue linked to a design.
 ---
 
-# Create Task
+# 创建任务
 
-Create a task issue and link it to a design.
+创建任务 Issue 并关联到设计文档。
 
-## Process
+## 流程
 
-1. **Remind user**
-   > Before creating a Task issue, ensure you have completed the implementation plan using `/superpowers:writing-plans` and saved the plan document.
+1. **提醒用户**
+   > 在创建 Task Issue 之前，请确保已使用 `/superpowers:writing-plans` 完成实现计划并保存了计划文档。
 
-2. **Detect repository**
+2. **检测仓库**
 
-3. **Determine design**
-   - If in context: use it
-   - If parameter: use `--design N`
-   - Otherwise: list designs and ask
+3. **确定设计文档**
+   - 如果上下文中有：直接使用
+   - 如果提供了参数：使用 `--design N`
+   - 否则：列出设计文档供选择
    ```bash
    gh issue list --label design --json number,title --jq '.[] | "#\(.number): \(.title)"'
    ```
 
-4. **Ensure label exists**
+4. **确保标签存在**
    ```bash
-   gh label create task --color FBCA04 --description "Implementation Task" 2>/dev/null || true
+   gh label create task --color FBCA04 --description "实现任务" 2>/dev/null || true
    ```
 
-5. **Gather task details**
-   - Task title/description
-   - Implementation plan path
+5. **收集任务详情**
+   - 任务标题/描述
+   - 实现计划路径
 
-6. **Get user story from design**
+6. **从设计文档获取用户故事**
    ```bash
    gh issue view {design_number} --json body --jq '.body'
    ```
-   Parse `## User Story` section to get user story number.
+   解析 `## User Story` 部分获取用户故事编号。
 
-7. **Get milestone from design**
+7. **从设计文档获取里程碑**
    ```bash
    gh issue view {design_number} --json milestone --jq '.milestone.number'
    ```
 
-8. **Create task issue**
+8. **创建任务 Issue**
 
    ```bash
    gh issue create \
-     --title "Task: {task_name}" \
-     --body "BODY" \
+     --title "Task: {任务名称}" \
+     --body "内容" \
      --label task \
      --milestone N
    ```
 
-9. **Update design** (add to Tasks list)
+9. **更新设计文档**（添加到 Tasks 列表）
 
-   Read current body, append to Tasks section:
-   - Replace `（待创建）` with `- [ ] #{task_number}`
-   - Or append `- [ ] #{task_number}` to existing list
+   读取当前内容，追加到 Tasks 部分：
+   - 将 `（待创建）` 替换为 `- [ ] #{task_number}`
+   - 或追加 `- [ ] #{task_number}` 到已有列表
 
    ```bash
-   gh issue edit {design_number} --body "NEW_BODY"
+   gh issue edit {design_number} --body "新内容"
    ```
 
-10. **Report result**
-    - Show task issue number and URL
-    - Confirm design was updated
-    - Store in context
+10. **报告结果**
+    - 显示任务 Issue 编号和 URL
+    - 确认设计文档已更新
+    - 存入上下文
 
-## Example
+## 示例
 
-After writing-plans session saved `docs/plans/2026-01-30-login-api.md`:
+使用 writing-plans 完成计划并保存到 `docs/plans/2026-01-30-login-api.md` 后：
 
 ```bash
 gh issue create \
-  --title "Task: Implement Login API Endpoint" \
-  --body "## Description
-Implement POST /api/auth/login endpoint with JWT token generation.
+  --title "Task: 实现登录 API 端点" \
+  --body "## 任务描述
+实现 POST /api/auth/login 端点，支持 JWT token 生成。
 
-## Implementation Plan
+## 实现计划
 📄 [docs/plans/2026-01-30-login-api.md](./docs/plans/2026-01-30-login-api.md)
 
 ## User Story
@@ -732,98 +732,98 @@ git commit -m "feat(issue-workflow): add create-task sub-skill"
 ```markdown
 ---
 name: create-test-cases
-description: Create a test cases issue linked to a task. Generates acceptance test cases in natural language.
+description: 创建与任务关联的测试用例 Issue。用自然语言生成验收测试用例。Create a test cases issue linked to a task.
 ---
 
-# Create Test Cases
+# 创建测试用例
 
-Create a test cases issue linked to a task.
+创建与任务关联的测试用例 Issue。
 
-## Process
+## 流程
 
-1. **Detect repository**
+1. **检测仓库**
 
-2. **Determine task**
-   - If in context: use it
-   - If parameter: use `--task N`
-   - Otherwise: list tasks and ask
+2. **确定任务**
+   - 如果上下文中有：直接使用
+   - 如果提供了参数：使用 `--task N`
+   - 否则：列出任务供选择
    ```bash
    gh issue list --label task --json number,title --jq '.[] | "#\(.number): \(.title)"'
    ```
 
-3. **Ensure label exists**
+3. **确保标签存在**
    ```bash
-   gh label create test-cases --color D93F0B --description "Test Cases" 2>/dev/null || true
+   gh label create test-cases --color D93F0B --description "测试用例" 2>/dev/null || true
    ```
 
-4. **Read task details**
+4. **读取任务详情**
    ```bash
    gh issue view {task_number} --json body,title --jq '{title: .title, body: .body}'
    ```
 
-5. **Extract user story number from task body**
+5. **从任务内容中提取用户故事编号**
 
-6. **Generate test cases suggestions**
+6. **生成测试用例建议**
 
-   Based on task content, suggest acceptance test cases in natural language.
-   Ask user to confirm/modify.
+   根据任务内容，用自然语言建议验收测试用例。
+   请用户确认/修改。
 
-7. **Get milestone from task**
+7. **从任务获取里程碑**
    ```bash
    gh issue view {task_number} --json milestone --jq '.milestone.number'
    ```
 
-8. **Create test cases issue**
+8. **创建测试用例 Issue**
 
    ```bash
    gh issue create \
-     --title "Test Cases: {task_name}" \
-     --body "BODY" \
+     --title "Test Cases: {任务名称}" \
+     --body "内容" \
      --label test-cases \
      --milestone N
    ```
 
-9. **Update task** (add Test Cases link)
+9. **更新任务**（添加 Test Cases 链接）
 
-   Replace `📄 （待创建）` with `📄 #{test_cases_number}`
+   将 `📄 （待创建）` 替换为 `📄 #{test_cases_number}`
 
    ```bash
-   gh issue edit {task_number} --body "NEW_BODY"
+   gh issue edit {task_number} --body "新内容"
    ```
 
-10. **Update user story** (add to acceptance criteria)
+10. **更新用户故事**（添加到验收标准）
 
-    Read user story body, append to acceptance criteria:
-    - Add `- [ ] [Test Cases #{number}](#{number})`
+    读取用户故事内容，追加到验收标准：
+    - 添加 `- [ ] [Test Cases #{number}](#{number})`
 
     ```bash
-    gh issue edit {user_story_number} --body "NEW_BODY"
+    gh issue edit {user_story_number} --body "新内容"
     ```
 
-11. **Report result**
-    - Show test cases issue number and URL
-    - Confirm task and user story were updated
+11. **报告结果**
+    - 显示测试用例 Issue 编号和 URL
+    - 确认任务和用户故事已更新
 
-## Example
+## 示例
 
-For task "Implement Login API Endpoint":
+针对任务 "实现登录 API 端点"：
 
-Suggested test cases:
-1. User can login with valid email and password
-2. Login fails with invalid password (returns 401)
-3. Login fails with non-existent email (returns 401)
-4. Login returns valid JWT token
-5. Login rate limiting works (max 5 attempts per minute)
+建议的测试用例：
+1. 用户可以使用有效的邮箱和密码登录
+2. 使用无效密码登录失败（返回 401）
+3. 使用不存在的邮箱登录失败（返回 401）
+4. 登录成功返回有效的 JWT token
+5. 登录限流生效（每分钟最多 5 次尝试）
 
 ```bash
 gh issue create \
-  --title "Test Cases: Login API Endpoint" \
-  --body "## Test Cases
-- [ ] User can login with valid email and password
-- [ ] Login fails with invalid password (returns 401)
-- [ ] Login fails with non-existent email (returns 401)
-- [ ] Login returns valid JWT token
-- [ ] Login rate limiting works (max 5 attempts per minute)
+  --title "Test Cases: 登录 API 端点" \
+  --body "## 测试用例
+- [ ] 用户可以使用有效的邮箱和密码登录
+- [ ] 使用无效密码登录失败（返回 401）
+- [ ] 使用不存在的邮箱登录失败（返回 401）
+- [ ] 登录成功返回有效的 JWT token
+- [ ] 登录限流生效（每分钟最多 5 次尝试）
 
 ## User Story
 📄 #42
