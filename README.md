@@ -48,12 +48,7 @@ cd ~/.claude/skills/dev-skills && git pull
 
 ## Dependencies
 
-This skill integrates with [superpowers](https://github.com/obra/superpowers). Recommended to install:
-
-```bash
-# Install superpowers (if not already installed)
-git clone https://github.com/obra/superpowers.git ~/.claude/skills/superpowers
-```
+This skill integrates with [superpowers](https://github.com/obra/superpowers). Recommended to install
 
 **Related skills:**
 - `superpowers:brainstorming` - For design phase brainstorming

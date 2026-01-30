@@ -48,12 +48,7 @@ cd ~/.claude/skills/dev-skills && git pull
 
 ## 依赖
 
-本技能与 [superpowers](https://github.com/obra/superpowers) 技能集成，建议同时安装：
-
-```bash
-# 安装 superpowers（如果尚未安装）
-git clone https://github.com/obra/superpowers.git ~/.claude/skills/superpowers
-```
+本技能与 [superpowers](https://github.com/obra/superpowers) 技能集成，建议同时安装
 
 **相关技能：**
 - `superpowers:brainstorming` - 用于设计阶段的头脑风暴
