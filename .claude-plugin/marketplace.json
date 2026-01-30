@@ -20,7 +20,8 @@
         "./skills/issue-workflow-user-story",
         "./skills/issue-workflow-design",
         "./skills/issue-workflow-task",
-        "./skills/issue-workflow-test-cases"
+        "./skills/issue-workflow-test-cases",
+        "./skills/issue-workflow-pull-request"
       ]
     }
   ]
