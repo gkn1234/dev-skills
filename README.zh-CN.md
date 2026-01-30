@@ -35,15 +35,19 @@ Milestone → User Story → Design → Task → Test Cases
 ## 安装
 
 ```bash
-# 克隆到 Claude Code skills 目录
-git clone https://github.com/gkn1234/dev-skills.git ~/.claude/skills/dev-skills
+# 添加 marketplace
+claude plugin marketplace add gkn1234/dev-skills
+
+# 安装插件
+claude plugin install dev-skills@dev-skills
 ```
 
 ## 更新
 
 ```bash
-# 进入 skills 目录并拉取最新代码
-cd ~/.claude/skills/dev-skills && git pull
+# 更新 marketplace 并重新安装
+claude plugin marketplace update dev-skills
+claude plugin update dev-skills@dev-skills
 ```
 
 ## 依赖

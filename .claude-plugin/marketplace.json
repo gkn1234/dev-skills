@@ -1,0 +1,22 @@
+{
+  "name": "dev-skills",
+  "owner": {
+    "name": "guokainan",
+    "email": "guokainan@vastai3d.com"
+  },
+  "metadata": {
+    "description": "Development workflow skills for issue management",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "dev-skills",
+      "description": "GitHub Issue-based development workflow management including milestones, user stories, design docs, tasks, and test cases",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./issue-workflow"
+      ]
+    }
+  ]
+}
