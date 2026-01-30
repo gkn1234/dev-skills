@@ -15,17 +15,20 @@ Dev Skills is a collection of Claude Code skills for enhancing development workf
 GitHub Issue-based development workflow management.
 
 **Features:**
-- Complete workflow: Milestone → User Story → Design → Task → Test Cases
+- Complete workflow: Milestone → User Story → Design → Task → Test Cases → Pull Request
 - Auto-create labels and bidirectional linking
 - Bilingual templates (zh/en, auto-detected)
 - Deep integration with [superpowers](https://github.com/anthropics/claude-code-superpowers) skills
+- Permanent links using commit SHA for design docs and implementation plans
+- Built-in quality checks for each workflow step
 
 **Workflow Overview:**
 
 ```
-Milestone → User Story → Design → Task → Test Cases
-    │           │           │        │         │
-    │           │           │        │         └── Acceptance tests (1:1 with Task)
+Milestone → User Story → Design → Task → Test Cases → Pull Request
+    │           │           │        │         │            │
+    │           │           │        │         │            └── Auto-close Task on merge
+    │           │           │        │         └── Acceptance tests (linked to Task/User Story)
     │           │           │        └── Implementation units (N:1 with Design)
     │           │           └── Design doc (1:1 with User Story)
     │           └── User stories (N:1 with Milestone)
@@ -62,14 +65,15 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 
 **Skills:**
 
-| Skill | Purpose |
-|-------|---------|
-| `/issue-workflow` | Workflow overview |
-| `/issue-workflow-milestone` | Create GitHub milestone |
-| `/issue-workflow-user-story` | Create user story issue |
-| `/issue-workflow-design` | Create design issue |
-| `/issue-workflow-task` | Create task issue |
-| `/issue-workflow-test-cases` | Create test cases issue |
+| Skill | Trigger | Purpose |
+|-------|---------|---------|
+| `/issue-workflow` | "workflow"/"issue management" | Workflow overview |
+| `/issue-workflow-milestone` | "milestone"/"new phase" | Create GitHub milestone |
+| `/issue-workflow-user-story` | "user story"/"I want to..." | Create user story issue |
+| `/issue-workflow-design` | After brainstorming/"design doc" | Create design issue |
+| `/issue-workflow-task` | After writing-plans/"create task" | Create task issue |
+| `/issue-workflow-test-cases` | After task/"test cases" | Create test cases issue |
+| `/issue-workflow-pull-request` | "create PR"/"pull request" | Create PR linked to tasks |
 
 **Typical Workflow:**
 
@@ -98,6 +102,11 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 5. **Create test cases**: Create acceptance test cases for the task
    ```
    /issue-workflow-test-cases
+   ```
+
+6. **Create pull request**: After implementation, create PR linked to tasks
+   ```
+   /issue-workflow-pull-request
    ```
 
 ## License
