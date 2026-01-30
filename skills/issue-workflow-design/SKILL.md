@@ -39,9 +39,18 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 - 提示："建议先使用 `superpowers:brainstorming` 完成设计"
 - 用户坚持继续 → 询问简要概述
 
-### 4. 确保文档已提交
+### 4. 质量检查
 
-检查设计文档是否已提交到 git：
+创建前检查设计文档标准：
+- 有明确目标？
+- 有技术方案？
+- 可拆分任务？
+
+有问题则提示用户补充，修改后再继续。
+
+### 5. 确保文档已提交
+
+质量检查通过后，检查设计文档是否已提交到 git：
 ```bash
 git ls-files --error-unmatch {doc_path} 2>/dev/null
 ```
@@ -53,15 +62,6 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 
 **已提交：**
 - 直接获取包含该文件的 commit SHA
-
-### 5. 质量检查
-
-创建前检查设计文档标准：
-- 有明确目标？
-- 有技术方案？
-- 可拆分任务？
-
-有问题则提示用户补充。
 
 ### 6. 创建 Issue
 
