@@ -96,20 +96,6 @@ cd ~/.claude/skills/dev-skills && git pull
    /dev-skills:issue-workflow:create-test-cases
    ```
 
-## 自动行为
-
-- **标签管理**：自动检查并创建缺失的标签（`user-story`, `design`, `task`, `test-cases`）
-- **双向链接**：自动在相关 Issue 间建立双向链接
-- **语言检测**：根据用户对话语言自动选择中/英文模板
-- **仓库检测**：优先从 `git remote` 自动检测仓库，失败时询问用户
-
-## 优先级规则
-
-对于所有输入（milestone, user-story, design, task）：
-1. 优先使用当前对话上下文中的信息
-2. 其次使用命令参数（如 `--milestone 1`）
-3. 最后查询 GitHub API 并展示选项列表供选择
-
 ## License
 
 MIT

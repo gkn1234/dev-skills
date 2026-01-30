@@ -96,20 +96,6 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
    /dev-skills:issue-workflow:create-test-cases
    ```
 
-## Auto Behaviors
-
-- **Label management**: Auto-check and create missing labels (`user-story`, `design`, `task`, `test-cases`)
-- **Bidirectional linking**: Auto-create links between related issues
-- **Language detection**: Auto-select zh/en template based on conversation language
-- **Repository detection**: Auto-detect from `git remote`, prompt if not found
-
-## Priority Rules
-
-For all inputs (milestone, user-story, design, task):
-1. First use information from current conversation context
-2. Then use command parameters (e.g., `--milestone 1`)
-3. Finally query GitHub API and present selection list
-
 ## License
 
 MIT
