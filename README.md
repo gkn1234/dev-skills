@@ -48,11 +48,11 @@ cd ~/.claude/skills/dev-skills && git pull
 
 ## Dependencies
 
-This skill integrates with [superpowers](https://github.com/anthropics/claude-code-superpowers). Recommended to install:
+This skill integrates with [superpowers](https://github.com/obra/superpowers). Recommended to install:
 
 ```bash
 # Install superpowers (if not already installed)
-git clone https://github.com/anthropics/claude-code-superpowers.git ~/.claude/skills/superpowers
+git clone https://github.com/obra/superpowers.git ~/.claude/skills/superpowers
 ```
 
 **Related skills:**
