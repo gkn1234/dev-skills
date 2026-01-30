@@ -1,51 +1,108 @@
 ---
 name: issue-workflow-milestone
-description: 创建 GitHub 里程碑，用于管理大需求。当开始新项目阶段或功能集时使用。Create a GitHub milestone for managing a large requirement.
+description: 当用户明确提到"里程碑"/"milestone"/"新阶段"、或创建用户故事时发现没有里程碑时使用
 ---
 
 # 创建里程碑
 
-创建 GitHub 里程碑以追踪大需求。
+## Overview
+
+里程碑用于组织一组相关的用户故事，代表一个可交付的功能集或项目阶段。帮助用户定义清晰的里程碑范围和目标。
+
+## 好的里程碑标准
+
+| 原则 | 含义 | 检查点 |
+|------|------|--------|
+| **目标明确** | 交付什么 | 里程碑完成时用户能得到什么 |
+| **范围合理** | 多大 | 包含 3-7 个用户故事 |
+| **可度量** | 怎么算完成 | 有明确的完成标准 |
+| **有时间框架** | 什么时候 | 有合理的截止日期（可选） |
 
 ## 流程
 
-1. **检测仓库**
-   ```bash
-   gh repo view --json nameWithOwner -q '.nameWithOwner'
-   ```
-   如果失败，询问用户 `owner/repo`。
+### 1. 检测仓库
+```bash
+gh repo view --json nameWithOwner -q '.nameWithOwner'
+```
+如果失败，询问用户 `owner/repo`。
 
-2. **收集信息**
-   - 询问里程碑标题
-   - 询问描述（可选）
-   - 询问截止日期（可选，格式：YYYY-MM-DD）
+### 2. 收集里程碑信息
 
-3. **创建里程碑**
-   ```bash
-   gh api repos/{owner}/{repo}/milestones -f title="标题" -f description="描述" -f due_on="日期"
-   ```
+引导用户思考：
+- 这个里程碑要交付什么价值？
+- 大概包含哪些功能？
+- 有没有截止日期？
 
-   不设截止日期时：
-   ```bash
-   gh api repos/{owner}/{repo}/milestones -f title="标题" -f description="描述"
-   ```
+### 3. 质量检查
 
-4. **报告结果**
-   - 显示里程碑编号和 URL
-   - 存入上下文供后续命令使用
+创建前检查里程碑标准：
+- 目标是否明确？
+- 范围是否合理（不要太大或太小）？
+
+有问题则提示用户调整。
+
+### 4. 创建里程碑
+
+```bash
+# 有截止日期
+gh api repos/{owner}/{repo}/milestones \
+  -f title="标题" \
+  -f description="描述" \
+  -f due_on="YYYY-MM-DDT00:00:00Z"
+
+# 无截止日期
+gh api repos/{owner}/{repo}/milestones \
+  -f title="标题" \
+  -f description="描述"
+```
+
+### 5. 引导下一步
+
+"里程碑已创建 (#N)。接下来可以使用 `issue-workflow-user-story` 在这个里程碑下创建用户故事。"
+
+## Common Mistakes
+
+| 错误 | 示例 | 正确做法 |
+|------|------|----------|
+| 范围太大 | "完成整个产品" | 拆分为多个里程碑，每个聚焦特定功能集 |
+| 范围太小 | "添加一个按钮" | 这应该是任务，不是里程碑 |
+| 目标模糊 | "优化系统" | 具体化："用户可以在 2 秒内完成搜索" |
+| 没有描述 | 只写标题 | 描述清楚里程碑包含的功能范围 |
 
 ## 示例
 
 用户："为用户认证功能创建一个里程碑"
 
-```bash
-gh api repos/myorg/myrepo/milestones \
-  -f title="用户认证" \
-  -f description="实现完整的用户认证系统，包括登录、注册和密码重置。"
+**引导对话：**
+```
+这个里程碑的目标是什么？
+→ "让用户能够注册、登录和管理自己的账户"
+
+大概包含哪些功能？
+→ "注册、登录、密码重置、个人资料管理"
+
+有截止日期吗？
+→ "下个月底"
 ```
 
-输出：
+**创建：**
+```bash
+gh api repos/myorg/myrepo/milestones \
+  -f title="用户认证系统" \
+  -f description="让用户能够注册、登录和管理自己的账户。包含：注册、登录、密码重置、个人资料管理。" \
+  -f due_on="2026-02-28T00:00:00Z"
 ```
-已创建里程碑 #3: 用户认证
+
+**输出：**
+```
+里程碑已创建 (#3): 用户认证系统
 URL: https://github.com/myorg/myrepo/milestone/3
+
+接下来可以使用 `issue-workflow-user-story` 创建用户故事。
 ```
+
+## 上下游关系
+
+| 方向 | 技能 | 说明 |
+|------|------|------|
+| 下游 | `issue-workflow-user-story` | 在里程碑下创建用户故事 |
