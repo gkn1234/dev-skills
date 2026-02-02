@@ -15,7 +15,7 @@ Dev Skills is a collection of Claude Code skills for enhancing development workf
 GitHub Issue-based development workflow management.
 
 **Features:**
-- Complete workflow: Milestone → User Story → Design → Task → Test Cases → Pull Request
+- Complete workflow: Milestone → User Story → Task → Test Cases → Pull Request
 - Auto-create labels and bidirectional linking
 - Bilingual templates (zh/en, auto-detected)
 - Deep integration with [superpowers](https://github.com/anthropics/claude-code-superpowers) skills
@@ -25,13 +25,12 @@ GitHub Issue-based development workflow management.
 **Workflow Overview:**
 
 ```
-Milestone → User Story → Design → Task → Test Cases → Pull Request
-    │           │           │        │         │            │
-    │           │           │        │         │            └── Auto-close Task on merge
-    │           │           │        │         └── Acceptance tests (linked to Task/User Story)
-    │           │           │        └── Implementation units (N:1 with Design)
-    │           │           └── Design doc (1:1 with User Story)
-    │           └── User stories (N:1 with Milestone)
+Milestone → User Story → Task → Test Cases → Pull Request
+    │           │          │         │            │
+    │           │          │         │            └── Auto-close Task on merge
+    │           │          │         └── Acceptance tests (linked to Task/User Story)
+    │           │          └── Implementation units (N:1 with User Story)
+    │           └── User stories (N:1 with Milestone, contains design)
     └── GitHub native milestone feature
 ```
 
@@ -70,7 +69,7 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 | `/issue-workflow` | "workflow"/"issue management" | Workflow overview |
 | `/issue-workflow-milestone` | "milestone"/"new phase" | Create GitHub milestone |
 | `/issue-workflow-user-story` | "user story"/"I want to..." | Create user story issue |
-| `/issue-workflow-design` | After brainstorming/"design doc" | Create design issue |
+| `/issue-workflow-design` | After brainstorming/"design doc" | Add design to User Story |
 | `/issue-workflow-task` | After writing-plans/"create task" | Create task issue |
 | `/issue-workflow-test-cases` | After task/"test cases" | Create test cases issue |
 | `/issue-workflow-pull-request` | "create PR"/"pull request" | Create PR linked to tasks |
@@ -87,7 +86,7 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
    /issue-workflow-user-story
    ```
 
-3. **Design phase**: Complete design with brainstorming, then create Design Issue
+3. **Design phase**: Complete design with brainstorming, then add to User Story
    ```
    /superpowers:brainstorming
    /issue-workflow-design

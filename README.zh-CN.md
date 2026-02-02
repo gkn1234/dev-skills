@@ -15,7 +15,7 @@ Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程�
 基于 GitHub Issue 的研发流程管理技能。
 
 **功能特性：**
-- 完整的研发流程：Milestone → User Story → Design → Task → Test Cases → Pull Request
+- 完整的研发流程：Milestone → User Story → Task → Test Cases → Pull Request
 - 自动创建标签并建立双向链接
 - 双语模板支持（中/英文，自动检测）
 - 与 [superpowers](https://github.com/anthropics/claude-code-superpowers) 技能深度集成
@@ -25,13 +25,12 @@ Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程�
 **流程概览：**
 
 ```
-Milestone → User Story → Design → Task → Test Cases → Pull Request
-    │           │           │        │         │            │
-    │           │           │        │         │            └── 合并后自动关闭 Task
-    │           │           │        │         └── 验收用例 (与 Task/User Story 关联)
-    │           │           │        └── 实现任务 (与 Design N:1)
-    │           │           └── 设计文档 (与 User Story 1:1)
-    │           └── 用户故事 (与 Milestone N:1)
+Milestone → User Story → Task → Test Cases → Pull Request
+    │           │          │         │            │
+    │           │          │         │            └── 合并后自动关闭 Task
+    │           │          │         └── 验收用例 (与 Task/User Story 关联)
+    │           │          └── 实现任务 (与 User Story N:1)
+    │           └── 用户故事 (与 Milestone N:1，包含设计内容)
     └── GitHub 原生里程碑功能
 ```
 
@@ -70,7 +69,7 @@ claude plugin update dev-skills@dev-skills
 | `/issue-workflow` | "研发流程"/"issue 管理" | 查看流程概览 |
 | `/issue-workflow-milestone` | "里程碑"/"新阶段" | 创建 GitHub 里程碑 |
 | `/issue-workflow-user-story` | "用户故事"/"我想要..." | 创建用户故事 Issue |
-| `/issue-workflow-design` | 完成 brainstorming 后/"设计文档" | 创建设计文档 Issue |
+| `/issue-workflow-design` | 完成 brainstorming 后/"设计文档" | 为 User Story 添加设计内容 |
 | `/issue-workflow-task` | 完成 writing-plans 后/"创建任务" | 创建任务 Issue |
 | `/issue-workflow-test-cases` | 从任务继续/"测试用例" | 创建测试用例 Issue |
 | `/issue-workflow-pull-request` | "创建 PR"/"提交 PR" | 创建关联任务的 PR |
@@ -87,7 +86,7 @@ claude plugin update dev-skills@dev-skills
    /issue-workflow-user-story
    ```
 
-3. **设计阶段**：使用 brainstorming 完成设计，然后创建 Design Issue
+3. **设计阶段**：使用 brainstorming 完成设计，然后添加到 User Story
    ```
    /superpowers:brainstorming
    /issue-workflow-design
