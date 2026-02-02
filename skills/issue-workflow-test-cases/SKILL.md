@@ -7,7 +7,7 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 
 ## Overview
 
-根据任务内容自动生成验收测试用例建议，用户确认后创建 Issue 并双向关联到任务和用户故事。使用自然语言描述业务场景，便于验收。
+根据任务内容自动生成验收测试用例建议，用户确认后创建 Issue 并双向关联到任务和上游 Issue（User Story 或 Problem）。使用自然语言描述业务场景，便于验收。
 
 ## 好的测试用例标准
 
@@ -33,8 +33,8 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 
 从任务 Issue 中提取：
 - 任务描述
-- 关联的用户故事编号
-- 关联的用户故事（可选读取 Design 区块补充上下文）
+- 关联的上游 Issue 编号（User Story 或 Problem）
+- 关联的上游 Issue（可选读取 Design 区块补充上下文）
 
 ### 4. 生成测试用例建议
 
@@ -61,11 +61,11 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 ### 7. 双向更新
 
 - 更新任务的 Test Cases 字段：`📄 #test_cases_number`
-- 更新用户故事的验收标准：添加 `- [ ] [Test Cases #N](#N)`
+- 更新上游 Issue（User Story 或 Problem）的验收标准：添加 `- [ ] [Test Cases #N](#N)`
 
 ### 8. 引导下一步
 
-"测试用例已创建 (#N) 并关联到任务 (#M) 和用户故事 (#K)。现在可以开始实现任务了。"
+"测试用例已创建 (#N) 并关联到任务 (#M) 和 User Story (#K) / Problem (#K)。现在可以开始实现任务了。"
 
 ## Issue 模板
 
@@ -76,8 +76,8 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 ## 测试用例
 - [ ] 【定稿：测试用例列表】
 
-## User Story
-📄 #user_story_number
+## 上游 Issue
+📄 #parent_issue_number
 
 ## Task
 📄 #task_number
@@ -88,8 +88,8 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 ## Test Cases
 - [ ] 【定稿：Test case list】
 
-## User Story
-📄 #user_story_number
+## Parent Issue
+📄 #parent_issue_number
 
 ## Task
 📄 #task_number
@@ -138,3 +138,4 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 |------|------|------|
 | 上游 | `issue-workflow-task` | 先有任务 |
 | 关联 | `issue-workflow-user-story` | 更新用户故事的验收标准 |
+| 关联 | `issue-workflow-problem` | 或更新问题的验收标准 |
