@@ -1,13 +1,13 @@
 ---
 name: issue-workflow-task
-description: 当用户完成 writing-plans 计划、从用户故事继续流程、或明确提到"创建任务"/"task issue"时使用
+description: 当用户完成 writing-plans 计划、从用户故事或问题继续流程、或明确提到"创建任务"/"task issue"时使用
 ---
 
 # 创建任务
 
 ## Overview
 
-将实现计划记录为 GitHub Issue，并建立与用户故事的追踪关联。支持引用已有计划文档或直接描述任务。
+将实现计划记录为 GitHub Issue，并建立与用户故事或问题的追踪关联。支持引用已有计划文档或直接描述任务。
 
 ## 好的任务标准
 
@@ -24,10 +24,10 @@ description: 当用户完成 writing-plans 计划、从用户故事继续流程�
 - 自动检测 `git remote`
 - 失败则询问用户
 
-### 2. 确定用户故事
-- 对话上下文中有：直接使用
-- 参数指定：`--user-story N`
-- 否则：列出用户故事供选择
+### 2. 确定上游 Issue
+- 对话上下文中有 User Story 或 Problem：直接使用
+- 参数指定：`--user-story N` 或 `--problem N`
+- 否则：列出 User Story 和 Problem 供选择
 
 ### 3. 检查实现计划
 
@@ -69,11 +69,11 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 
 ### 7. 双向更新
 
-更新用户故事的 Tasks 列表：添加 `- [ ] #task_number`
+更新上游 Issue（User Story 或 Problem）的 Tasks 列表：添加 `- [ ] #task_number`
 
 ### 8. 引导下一步
 
-"任务已创建 (#N) 并关联到用户故事 (#M)。接下来可以使用 `issue-workflow-test-cases` 创建测试用例。"
+"任务已创建 (#N) 并关联到 User Story (#M) / Problem (#M)。接下来可以使用 `issue-workflow-test-cases` 创建测试用例。"
 
 ## Issue 模板
 
@@ -87,8 +87,8 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 ## 实现计划
 📄 [docs/plans/YYYY-MM-DD-xxx.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx.md)
 
-## User Story
-📄 #user_story_number
+## 上游 Issue
+📄 #parent_issue_number
 
 ## Test Cases
 📄 （待创建，由 issue-workflow-test-cases 关联，格式：#issue_number）
@@ -102,8 +102,8 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 ## Implementation Plan
 📄 [docs/plans/YYYY-MM-DD-xxx.md](https://github.com/{owner}/{repo}/blob/{commit_sha}/docs/plans/YYYY-MM-DD-xxx.md)
 
-## User Story
-📄 #user_story_number
+## Parent Issue
+📄 #parent_issue_number
 
 ## Test Cases
 📄 (To be created, linked by issue-workflow-test-cases, format: #issue_number)
@@ -120,7 +120,7 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 | 任务太大 | "实现整个登录系统" | 拆分："实现登录 API"、"实现登录页面" |
 | 描述模糊 | "优化性能" | 具体化："将列表加载时间从 3s 降到 1s" |
 | 没有完成标准 | 只写"做XX" | 添加"完成时应该能XX" |
-| 忘记关联用户故事 | 孤立的任务 | 必须关联用户故事 |
+| 忘记关联上游 | 孤立的任务 | 必须关联 User Story 或 Problem |
 | 跳过计划 | 边做边想 | 先完成实现计划 |
 
 ## 示例
@@ -152,5 +152,6 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 | 方向 | 技能 | 说明 |
 |------|------|------|
 | 上游 | `issue-workflow-user-story` | 先有用户故事 |
+| 上游 | `issue-workflow-problem` | 或先有问题 |
 | 上游 | `superpowers:writing-plans` | 建议先完成计划 |
 | 下游 | `issue-workflow-test-cases` | 创建后添加测试用例 |
