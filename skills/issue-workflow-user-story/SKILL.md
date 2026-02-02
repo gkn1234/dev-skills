@@ -72,6 +72,9 @@ description: 当用户想要添加新功能（"我想加个..."、"需要一个.
 ## Design
 📄 （待填充，使用 `issue-workflow-design` 添加设计）
 
+## Tasks
+- [ ] （待创建，由 issue-workflow-task 关联，格式：#issue_number）
+
 ## 验收标准
 - [ ] （待创建，由 issue-workflow-test-cases 关联，格式：[Test Cases #N](#N)）
 ```
@@ -83,6 +86,9 @@ description: 当用户想要添加新功能（"我想加个..."、"需要一个.
 
 ## Design
 📄 (To be filled, use `issue-workflow-design` to add design)
+
+## Tasks
+- [ ] (To be created, linked by issue-workflow-task, format: #issue_number)
 
 ## Acceptance Criteria
 - [ ] (To be created, linked by issue-workflow-test-cases, format: [Test Cases #N](#N))
