@@ -12,13 +12,12 @@ description: 当用户提到"研发流程"/"issue 管理"/"项目管理"、或�
 ## 流程概览
 
 ```
-Milestone → User Story → Design → Task → Test Cases → Pull Request
-    │           │           │        │         │            │
-    │           │           │        │         │            └── 合并后自动关闭 Task
-    │           │           │        │         └── 验收用例 (与 Task/User Story 关联)
-    │           │           │        └── 实现任务 (与 Design N:1)
-    │           │           └── 设计文档 (与 User Story 1:1)
-    │           └── 用户故事 (与 Milestone N:1)
+Milestone → User Story → Task → Test Cases → Pull Request
+    │           │          │         │            │
+    │           │          │         │            └── 合并后自动关闭 Task
+    │           │          │         └── 验收用例 (与 Task/User Story 关联)
+    │           │          └── 实现任务 (与 User Story N:1)
+    │           └── 用户故事 (与 Milestone N:1，包含设计内容)
     └── GitHub 原生里程碑功能
 ```
 
@@ -28,7 +27,7 @@ Milestone → User Story → Design → Task → Test Cases → Pull Request
 |------|----------|------|
 | `issue-workflow-milestone` | "里程碑"/"milestone"/"新阶段" | 创建 GitHub 里程碑 |
 | `issue-workflow-user-story` | "用户故事"/"user story"/"我想要..." | 创建用户故事 Issue |
-| `issue-workflow-design` | 完成 brainstorming 后、"设计文档"/"design" | 创建设计文档 Issue |
+| `issue-workflow-design` | 完成 brainstorming 后、"设计文档"/"design" | 为 User Story 添加设计内容 |
 | `issue-workflow-task` | 完成 writing-plans 后、"创建任务"/"task" | 创建任务 Issue |
 | `issue-workflow-test-cases` | 从任务继续、"测试用例"/"test cases" | 创建测试用例 Issue |
 | `issue-workflow-pull-request` | "创建 PR"/"提交 PR"/"pull request" | 创建关联 Task 的 PR |
@@ -38,14 +37,14 @@ Milestone → User Story → Design → Task → Test Cases → Pull Request
 | 阶段 | 推荐流程 |
 |------|----------|
 | **规划** | 创建 Milestone → 拆分 User Story |
-| **设计** | `superpowers:brainstorming` → `issue-workflow-design` |
+| **设计** | `superpowers:brainstorming` → `issue-workflow-design`（更新 User Story） |
 | **计划** | `superpowers:writing-plans` → `issue-workflow-task` |
 | **测试** | `issue-workflow-test-cases` |
 | **提交** | 实现代码 → `issue-workflow-pull-request` |
 
 ## 自动行为
 
-- **标签管理**：自动检查并创建缺失的标签（`user-story`, `design`, `task`, `test-cases`）
+- **标签管理**：自动检查并创建缺失的标签（`user-story`, `task`, `test-cases`）
 - **双向关联**：自动在相关 Issue 间建立双向链接
 - **语言适配**：根据用户对话语言自动选择模板（中/英文）
 - **仓库检测**：优先从 `git remote` 自动检测，失败时询问用户
