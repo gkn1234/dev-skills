@@ -25,6 +25,7 @@ GitHub Issue-based development workflow management.
 **Workflow Overview:**
 
 ```
+Forward Development Flow:
 Milestone → User Story → Task → Test Cases → Pull Request
     │           │          │         │            │
     │           │          │         │            └── Auto-close Task on merge
@@ -32,6 +33,15 @@ Milestone → User Story → Task → Test Cases → Pull Request
     │           │          └── Implementation units (N:1 with User Story)
     │           └── User stories (N:1 with Milestone, contains design)
     └── GitHub native milestone feature
+
+Problem Fix Flow:
+Milestone → Problem → Task → Test Cases → Pull Request
+    │          │         │         │            │
+    │          │         │         │            └── Auto-close Task on merge
+    │          │         │         └── Close Problem after verification
+    │          │         └── Fix tasks (N:1 with Problem)
+    │          └── Problem reports (bug/improvement/refactor)
+    └── Can be used for dedicated fix milestones
 ```
 
 ## Installation
@@ -68,6 +78,7 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 |-------|---------|---------|
 | `/issue-workflow` | "workflow"/"issue management" | Workflow overview |
 | `/issue-workflow-milestone` | "milestone"/"new phase" | Create GitHub milestone |
+| `/issue-workflow-problem` | "problem"/"bug"/"improvement"/"refactor" | Submit Problem Issue |
 | `/issue-workflow-user-story` | "user story"/"I want to..." | Create user story issue |
 | `/issue-workflow-design` | After brainstorming/"design doc" | Add design to User Story |
 | `/issue-workflow-task` | After writing-plans/"create task" | Create task issue |
@@ -107,6 +118,20 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
    ```
    /issue-workflow-pull-request
    ```
+
+**Problem Fix Workflow:**
+
+1. **Submit problem**: Submit when discovering bugs or improvements
+   ```
+   /issue-workflow-problem
+   ```
+
+2. **Design fix**: Add design for the problem
+   ```
+   /issue-workflow-design
+   ```
+
+3. **Continue with forward development flow**
 
 ## License
 

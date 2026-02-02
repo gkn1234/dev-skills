@@ -25,6 +25,7 @@ Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程�
 **流程概览：**
 
 ```
+正向开发流程：
 Milestone → User Story → Task → Test Cases → Pull Request
     │           │          │         │            │
     │           │          │         │            └── 合并后自动关闭 Task
@@ -32,6 +33,15 @@ Milestone → User Story → Task → Test Cases → Pull Request
     │           │          └── 实现任务 (与 User Story N:1)
     │           └── 用户故事 (与 Milestone N:1，包含设计内容)
     └── GitHub 原生里程碑功能
+
+问题修复流程：
+Milestone → Problem → Task → Test Cases → Pull Request
+    │          │         │         │            │
+    │          │         │         │            └── 合并后自动关闭 Task
+    │          │         │         └── 验证通过后关闭 Problem
+    │          │         └── 修复任务 (与 Problem N:1)
+    │          └── 问题报告 (bug/improvement/refactor)
+    └── 可用于专门的修复里程碑
 ```
 
 ## 安装
@@ -68,6 +78,7 @@ claude plugin update dev-skills@dev-skills
 |------|----------|------|
 | `/issue-workflow` | "研发流程"/"issue 管理" | 查看流程概览 |
 | `/issue-workflow-milestone` | "里程碑"/"新阶段" | 创建 GitHub 里程碑 |
+| `/issue-workflow-problem` | "问题"/"bug"/"改进"/"重构" | 提交 Problem Issue |
 | `/issue-workflow-user-story` | "用户故事"/"我想要..." | 创建用户故事 Issue |
 | `/issue-workflow-design` | 完成 brainstorming 后/"设计文档" | 为 User Story 添加设计内容 |
 | `/issue-workflow-task` | 完成 writing-plans 后/"创建任务" | 创建任务 Issue |
@@ -107,6 +118,20 @@ claude plugin update dev-skills@dev-skills
    ```
    /issue-workflow-pull-request
    ```
+
+**问题修复流程：**
+
+1. **提交问题**：发现 bug 或改进点时提交
+   ```
+   /issue-workflow-problem
+   ```
+
+2. **设计修复方案**：为问题添加设计
+   ```
+   /issue-workflow-design
+   ```
+
+3. **后续流程同正向开发**
 
 ## License
 
