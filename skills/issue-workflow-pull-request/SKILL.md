@@ -27,7 +27,7 @@ description: 当用户明确提到"创建 PR"/"提交 PR"/"pull request"、或�
 - 都没有：列出 task issue 供选择（支持多选）
 
 ### 3. 收集 PR 信息
-- 读取 task issue 内容（任务描述、关联的 user story、design、test cases）
+- 读取 task issue 内容（任务描述、关联的 user story、test cases）
 - 获取当前分支相对于 base 分支的 commits
 - 确定 base 分支（默认 main/master）
 
@@ -72,7 +72,6 @@ gh pr create --title "标题" --body "描述" --base main
 
 ### Context
 - User Story: #user_story_number
-- Design: #design_number
 - Test Cases: #test_cases_1, #test_cases_2
 ```
 
@@ -91,7 +90,6 @@ gh pr create --title "标题" --body "描述" --base main
 
 ### Context
 - User Story: #user_story_number
-- Design: #design_number
 - Test Cases: #test_cases_1, #test_cases_2
 ```
 
@@ -130,7 +128,6 @@ PR 描述：
 
 ### Context
 - User Story: #42
-- Design: #43
 - Test Cases: #46
 
 确认创建 PR 吗？或者需要修改？
