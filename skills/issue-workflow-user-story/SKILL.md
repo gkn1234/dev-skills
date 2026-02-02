@@ -70,7 +70,7 @@ description: 当用户想要添加新功能（"我想加个..."、"需要一个.
 【定稿】
 
 ## Design
-📄 （待创建，由 issue-workflow-design 关联，格式：#issue_number）
+📄 （待填充，使用 `issue-workflow-design` 添加设计）
 
 ## 验收标准
 - [ ] （待创建，由 issue-workflow-test-cases 关联，格式：[Test Cases #N](#N)）
@@ -82,7 +82,7 @@ description: 当用户想要添加新功能（"我想加个..."、"需要一个.
 【定稿】
 
 ## Design
-📄 (To be created, linked by issue-workflow-design, format: #issue_number)
+📄 (To be filled, use `issue-workflow-design` to add design)
 
 ## Acceptance Criteria
 - [ ] (To be created, linked by issue-workflow-test-cases, format: [Test Cases #N](#N))
@@ -131,5 +131,5 @@ D. 其他（请描述）
 | 方向 | 技能 | 说明 |
 |------|------|------|
 | 上游 | `issue-workflow-milestone` | 通常先创建里程碑 |
-| 下游 | `issue-workflow-design` | 创建后引导做设计 |
+| 下游 | `issue-workflow-design` | 添加设计内容到 User Story |
 | 关联 | `issue-workflow-test-cases` | 验收标准由此填充 |
