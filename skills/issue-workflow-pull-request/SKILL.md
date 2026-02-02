@@ -71,7 +71,7 @@ gh pr create --title "标题" --body "描述" --base main
 - Closes #task_2
 
 ### Context
-- User Story: #user_story_number
+- User Story / Problem: #parent_issue_number
 - Test Cases: #test_cases_1, #test_cases_2
 ```
 
@@ -89,7 +89,7 @@ gh pr create --title "标题" --body "描述" --base main
 - Closes #task_2
 
 ### Context
-- User Story: #user_story_number
+- User Story / Problem: #parent_issue_number
 - Test Cases: #test_cases_1, #test_cases_2
 ```
 
@@ -141,3 +141,4 @@ PR 描述：
 |------|------|------|
 | 上游 | `issue-workflow-task` | 先有任务 |
 | 上游 | `issue-workflow-test-cases` | 建议先有测试用例 |
+| 关联 | `issue-workflow-problem` | 任务可能来自 Problem |
