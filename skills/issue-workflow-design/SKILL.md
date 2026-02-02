@@ -1,13 +1,13 @@
 ---
 name: issue-workflow-design
-description: 当用户完成 brainstorming 设计、从用户故事继续流程、或明确提到"添加设计"/"design"时使用
+description: 当用户完成 brainstorming 设计、从用户故事或问题继续流程、或明确提到"添加设计"/"design"时使用
 ---
 
-# 添加设计到 User Story
+# 添加设计
 
 ## Overview
 
-为 User Story 添加设计内容，支持两种模式：简单功能直接写概述，复杂功能链接设计文档。不创建单独的 Design Issue。
+为 User Story 或 Problem 添加设计内容，支持两种模式：简单功能直接写概述，复杂功能链接设计文档。不创建单独的 Design Issue。
 
 ## 好的设计标准
 
@@ -24,10 +24,10 @@ description: 当用户完成 brainstorming 设计、从用户故事继续流程�
 - 自动检测 `git remote`
 - 失败则询问用户
 
-### 2. 确定 User Story
-- 对话上下文中有：直接使用
-- 参数指定：`--user-story N`
-- 否则：列出 User Story 供选择
+### 2. 确定目标 Issue
+- 对话上下文中有 User Story 或 Problem：直接使用
+- 参数指定：`--user-story N` 或 `--problem N`
+- 否则：列出 User Story 和 Problem 供选择
 
 ### 3. 判断复杂度
 
@@ -87,7 +87,7 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 **已提交：**
 - 直接获取包含该文件的 commit SHA
 
-### 7. 更新 User Story
+### 7. 更新目标 Issue
 
 使用 `gh issue edit` 更新 User Story 的 body，添加 `## Design` 部分：
 
@@ -103,8 +103,8 @@ gh issue edit {issue_number} --body-file /tmp/issue_body.md
 
 ### 8. 引导下一步
 
-"已为 User Story (#N) 添加设计内容。接下来：
-- 使用 `issue-workflow-task` 创建实现任务
+"已为 User Story (#N) / Problem (#N) 添加设计内容。接下来：
+- 使用 `issue-workflow-task` 创建实现/修复任务
 - 或使用 `superpowers:writing-plans` 编写详细实现计划"
 
 ## Design 内容格式
@@ -175,6 +175,7 @@ gh issue edit {issue_number} --body-file /tmp/issue_body.md
 | 方向 | 技能 | 说明 |
 |------|------|------|
 | 上游 | `issue-workflow-user-story` | 先有 User Story |
+| 上游 | `issue-workflow-problem` | 或先有 Problem |
 | 上游 | `superpowers:brainstorming` | 复杂功能建议先完成设计 |
-| 下游 | `issue-workflow-task` | 更新 User Story 后引导创建任务 |
+| 下游 | `issue-workflow-task` | 添加设计后引导创建任务 |
 | 下游 | `superpowers:writing-plans` | 或编写详细实现计划 |
