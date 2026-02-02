@@ -21,7 +21,8 @@
         "./skills/issue-workflow-design",
         "./skills/issue-workflow-task",
         "./skills/issue-workflow-test-cases",
-        "./skills/issue-workflow-pull-request"
+        "./skills/issue-workflow-pull-request",
+        "./skills/issue-workflow-problem"
       ]
     }
   ]
