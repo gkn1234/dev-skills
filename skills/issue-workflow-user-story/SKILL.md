@@ -137,5 +137,6 @@ D. 其他（请描述）
 | 方向 | 技能 | 说明 |
 |------|------|------|
 | 上游 | `issue-workflow-milestone` | 通常先创建里程碑 |
-| 下游 | `issue-workflow-design` | 添加设计内容到 User Story |
-| 关联 | `issue-workflow-test-cases` | 验收标准由此填充 |
+| 下游 | `issue-workflow-design` | 添加设计内容 |
+| 下游 | `issue-workflow-task` | 创建实现任务 |
+| 下游 | `issue-workflow-test-cases` | 创建验收测试 |
