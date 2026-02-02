@@ -12,13 +12,25 @@ description: 当用户提到"研发流程"/"issue 管理"/"项目管理"、或�
 ## 流程概览
 
 ```
-Milestone → User Story → Task → Test Cases → Pull Request
-    │           │          │         │            │
-    │           │          │         │            └── 合并后自动关闭 Task
-    │           │          │         └── 验收用例 (与 Task/User Story 关联)
-    │           │          └── 实现任务 (与 User Story N:1)
-    │           └── 用户故事 (与 Milestone N:1，包含设计内容)
+正向开发流程：
+Milestone → User Story → Design → Task → Test Cases → Pull Request
+    │           │          │        │         │            │
+    │           │          │        │         │            └── 合并后自动关闭 Task
+    │           │          │        │         └── 验收用例 (与 Task/User Story 关联)
+    │           │          │        └── 实现任务 (与 User Story N:1)
+    │           │          └── 设计内容 (嵌入 User Story)
+    │           └── 用户故事 (与 Milestone N:1)
     └── GitHub 原生里程碑功能
+
+问题修复流程：
+Milestone → Problem → Design → Task → Test Cases → Pull Request
+    │          │         │        │         │            │
+    │          │         │        │         │            └── 合并后自动关闭 Task
+    │          │         │        │         └── 验证通过后关闭 Problem
+    │          │         │        └── 修复任务 (与 Problem N:1)
+    │          │         └── 修复方案 (嵌入 Problem)
+    │          └── 问题报告 (bug/improvement/refactor)
+    └── 可用于专门的修复里程碑
 ```
 
 ## 技能列表
@@ -26,6 +38,7 @@ Milestone → User Story → Task → Test Cases → Pull Request
 | 技能 | 触发条件 | 用途 |
 |------|----------|------|
 | `issue-workflow-milestone` | "里程碑"/"milestone"/"新阶段" | 创建 GitHub 里程碑 |
+| `issue-workflow-problem` | "问题"/"problem"/"bug"/"改进"/"重构" | 提交 Problem Issue |
 | `issue-workflow-user-story` | "用户故事"/"user story"/"我想要..." | 创建用户故事 Issue |
 | `issue-workflow-design` | 完成 brainstorming 后、"设计文档"/"design" | 为 User Story 添加设计内容 |
 | `issue-workflow-task` | 完成 writing-plans 后、"创建任务"/"task" | 创建任务 Issue |
@@ -41,10 +54,12 @@ Milestone → User Story → Task → Test Cases → Pull Request
 | **计划** | `superpowers:writing-plans` → `issue-workflow-task` |
 | **测试** | `issue-workflow-test-cases` |
 | **提交** | 实现代码 → `issue-workflow-pull-request` |
+| **问题提交** | `issue-workflow-problem` |
+| **问题修复** | `issue-workflow-design` → `issue-workflow-task` → `issue-workflow-test-cases` → `issue-workflow-pull-request` |
 
 ## 自动行为
 
-- **标签管理**：自动检查并创建缺失的标签（`user-story`, `task`, `test-cases`）
+- **标签管理**：自动检查并创建缺失的标签（`user-story`, `task`, `test-cases`, `problem`, `bug`, `improvement`, `refactor`, `severity:*`, `priority:*`）
 - **双向关联**：自动在相关 Issue 间建立双向链接
 - **语言适配**：根据用户对话语言自动选择模板（中/英文）
 - **仓库检测**：优先从 `git remote` 自动检测，失败时询问用户
@@ -62,6 +77,7 @@ Milestone → User Story → Task → Test Cases → Pull Request
 每个技能都内置质量检查，确保：
 - **Milestone**：目标明确、范围合理
 - **User Story**：符合 INVEST 原则
+- **Problem**：描述清晰、标签完整、复现步骤明确（BUG 类型）
 - **Design**：有明确目标、技术方案、可拆分任务
 - **Task**：目标明确、1-3 天可完成、有完成标准
 - **Test Cases**：场景明确、预期清晰、可验证
