@@ -1,13 +1,13 @@
 ---
 name: issue-workflow-milestone
-description: 当用户明确提到"里程碑"/"milestone"/"新阶段"、或创建用户故事时发现没有里程碑时使用
+description: 当用户明确提到"里程碑"/"milestone"/"新阶段"、或创建用户故事/问题时发现没有里程碑时使用
 ---
 
 # 创建里程碑
 
 ## Overview
 
-里程碑用于组织一组相关的用户故事，代表一个可交付的功能集或项目阶段。帮助用户定义清晰的里程碑范围和目标。
+里程碑用于组织一组相关的用户故事或问题，代表一个可交付的功能集或项目阶段。帮助用户定义清晰的里程碑范围和目标。
 
 ## 好的里程碑标准
 
@@ -58,7 +58,9 @@ gh api repos/{owner}/{repo}/milestones \
 
 ### 5. 引导下一步
 
-"里程碑已创建 (#N)。接下来可以使用 `issue-workflow-user-story` 在这个里程碑下创建用户故事。"
+"里程碑已创建 (#N)。接下来可以：
+- 使用 `issue-workflow-user-story` 创建用户故事
+- 使用 `issue-workflow-problem` 提交问题"
 
 ## Common Mistakes
 
@@ -105,4 +107,5 @@ URL: https://github.com/myorg/myrepo/milestone/3
 
 | 方向 | 技能 | 说明 |
 |------|------|------|
-| 下游 | `issue-workflow-user-story` | 在里程碑下创建用户故事 |
+| 下游 | `issue-workflow-user-story` | 创建用户故事 |
+| 下游 | `issue-workflow-problem` | 提交问题 |
