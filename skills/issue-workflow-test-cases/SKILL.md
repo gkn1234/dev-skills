@@ -56,7 +56,7 @@ description: 当用户从任务继续流程、或明确提到"测试用例"/"tes
 
 ### 6. 创建 Issue
 
-确保 `test-cases` 标签存在，创建并关联 Milestone。
+确保 `test-cases` 标签存在。从关联的 Task 读取 Milestone 并关联到新创建的 Test Cases。
 
 ### 7. 双向更新
 

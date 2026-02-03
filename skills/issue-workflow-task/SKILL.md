@@ -65,7 +65,7 @@ git ls-files --error-unmatch {doc_path} 2>/dev/null
 
 ### 6. 创建 Issue
 
-确保 `task` 标签存在，创建并关联 Milestone。
+确保 `task` 标签存在。从上游 Issue（User Story 或 Problem）读取 Milestone 并关联到新创建的 Task。
 
 ### 7. 双向更新
 
