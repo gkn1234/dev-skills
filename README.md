@@ -6,21 +6,20 @@ A collection of Claude Code skills for development workflows.
 
 ## Introduction
 
-Dev Skills is a collection of Claude Code skills for enhancing development workflows. Includes `issue-workflow` for GitHub Issue-based development workflow management, and `feishu-doc` for reading Feishu/Lark documents.
+Dev Skills is a collection of Claude Code skills for enhancing development workflows. Includes `issue-workflow` for PRD-driven GitHub Issue development workflow management, and `feishu-doc` for reading Feishu/Lark documents.
 
 ## Skills
 
 ### issue-workflow
 
-GitHub Issue-based development workflow management.
+PRD-driven GitHub Issue development workflow management.
 
 **Features:**
-- Complete workflow: Milestone → User Story → Task → Test Cases → Pull Request
-- Auto-create labels and bidirectional linking
-- Bilingual templates (zh/en, auto-detected)
+- Complete workflow: PRD Review → Main Issue → Sub Issues → Tasks → Test Cases → Implementation → PR
+- Technical feasibility assessment with feature breakdown
+- Bilingual support (zh/en)
 - Deep integration with [superpowers](https://github.com/anthropics/claude-code-superpowers) skills
-- Permanent links using commit SHA for design docs and implementation plans
-- Built-in quality checks for each workflow step
+- Git worktree isolation for implementation
 
 ### feishu-doc
 
@@ -42,23 +41,28 @@ export FEISHU_APP_SECRET=xxx
 **Workflow Overview:**
 
 ```
-Forward Development Flow:
-Milestone → User Story → Task → Test Cases → Pull Request
-    │           │          │         │            │
-    │           │          │         │            └── Auto-close Task on merge
-    │           │          │         └── Acceptance tests (linked to Task/User Story)
-    │           │          └── Implementation units (N:1 with User Story)
-    │           └── User stories (N:1 with Milestone, contains design)
-    └── GitHub native milestone feature
-
-Problem Fix Flow:
-Milestone → Problem → Task → Test Cases → Pull Request
-    │          │         │         │            │
-    │          │         │         │            └── Auto-close Task on merge
-    │          │         │         └── Close Problem after verification
-    │          │         └── Fix tasks (N:1 with Problem)
-    │          └── Problem reports (bug/improvement/refactor)
-    └── Can be used for dedicated fix milestones
+PRD Document
+    │
+    ▼
+issue-prd-review ─→ Main Issue + Technical Review Comment
+    │
+    ▼ (for each feature)
+issue-design ─→ Sub Issue + Design Comment
+    │
+    ▼ (for each task)
+issue-tasks ─→ Task Comment
+    │
+    ▼ (optional)
+issue-test-cases ─→ Test Cases Comment
+    │
+    ▼
+issue-implement ─→ Code Implementation
+    │
+    ▼
+issue-pr ─→ Pull Request
+    │
+    ▼
+Manual merge → Manual close Issue
 ```
 
 ## Installation
@@ -93,62 +97,47 @@ This skill integrates with [superpowers](https://github.com/obra/superpowers). R
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
-| `/issue-workflow` | "workflow"/"issue management" | Workflow overview |
-| `/issue-workflow-milestone` | "milestone"/"new phase" | Create GitHub milestone |
-| `/issue-workflow-problem` | "problem"/"bug"/"improvement"/"refactor" | Submit Problem Issue |
-| `/issue-workflow-user-story` | "user story"/"I want to..." | Create user story issue |
-| `/issue-workflow-design` | After brainstorming/"design doc" | Add design to User Story |
-| `/issue-workflow-task` | After writing-plans/"create task" | Create task issue |
-| `/issue-workflow-test-cases` | After task/"test cases" | Create test cases issue |
-| `/issue-workflow-pull-request` | "create PR"/"pull request" | Create PR linked to tasks |
+| `issue-workflow` | "workflow"/"next step"/"progress" | Workflow overview and status detection |
+| `issue-prd-review` | "review PRD"/"new requirement"/"create issue" | PRD review → Main Issue + Technical Review |
+| `issue-design` | "add design"/"create sub issue" | Create Sub Issue + Design Comment |
+| `issue-tasks` | "add tasks"/"task breakdown" | Add Task Comment |
+| `issue-test-cases` | "test cases"/"acceptance criteria" | Add Test Cases Comment |
+| `issue-implement` | "implement"/"develop"/"coding" | Code implementation in worktree |
+| `issue-pr` | "create PR"/"pull request" | Create PR linked to Sub Issue |
+| `issue-repo` | (auto-called) | Determine target repository |
+| `feishu-doc` | Feishu link/"read feishu doc" | Read Feishu document to JSON |
 
 **Typical Workflow:**
 
-1. **Create milestone**: Create a milestone for new requirements
+1. **PRD Review**: Review PRD and create Main Issue
    ```
-   /issue-workflow-milestone
-   ```
-
-2. **Create user story**: Break down requirements into user stories
-   ```
-   /issue-workflow-user-story
+   /issue-prd-review
    ```
 
-3. **Design phase**: Complete design with brainstorming, then add to User Story
+2. **Create Sub Issues**: Create Sub Issue for each feature with design
    ```
-   /superpowers:brainstorming
-   /issue-workflow-design
-   ```
-
-4. **Task breakdown**: Write plan with writing-plans, then create Task Issue
-   ```
-   /superpowers:writing-plans
-   /issue-workflow-task
+   /issue-design
    ```
 
-5. **Create test cases**: Create acceptance test cases for the task
+3. **Task Breakdown**: Add Task Comment for implementation details
    ```
-   /issue-workflow-test-cases
-   ```
-
-6. **Create pull request**: After implementation, create PR linked to tasks
-   ```
-   /issue-workflow-pull-request
+   /issue-tasks
    ```
 
-**Problem Fix Workflow:**
-
-1. **Submit problem**: Submit when discovering bugs or improvements
+4. **Test Cases** (optional): Add acceptance test cases
    ```
-   /issue-workflow-problem
+   /issue-test-cases
    ```
 
-2. **Design fix**: Add design for the problem
+5. **Implementation**: Implement task in isolated worktree
    ```
-   /issue-workflow-design
+   /issue-implement
    ```
 
-3. **Continue with forward development flow**
+6. **Create PR**: Create Pull Request linked to Sub Issue
+   ```
+   /issue-pr
+   ```
 
 ## License
 

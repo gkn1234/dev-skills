@@ -6,21 +6,20 @@
 
 ## 简介
 
-Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程。包含 `issue-workflow` 技能帮助团队基于 GitHub Issue 进行规范化的研发流程管理，以及 `feishu-doc` 技能用于读取飞书文档。
+Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程。包含 `issue-workflow` 技能帮助团队基于 PRD 驱动的 GitHub Issue 进行规范化的研发流程管理，以及 `feishu-doc` 技能用于读取飞书文档。
 
 ## Skills
 
 ### issue-workflow
 
-基于 GitHub Issue 的研发流程管理技能。
+基于 PRD 驱动的 GitHub Issue 研发流程管理技能。
 
 **功能特性：**
-- 完整的研发流程：Milestone → User Story → Task → Test Cases → Pull Request
-- 自动创建标签并建立双向链接
-- 双语模板支持（中/英文，自动检测）
+- 完整的研发流程：PRD 评审 → 主 Issue → 子 Issue → Task → Test Cases → 实现 → PR
+- 技术可行性评估与功能点拆分
+- 双语支持（中/英文）
 - 与 [superpowers](https://github.com/anthropics/claude-code-superpowers) 技能深度集成
-- 使用 commit SHA 生成永久链接，避免分支删除后链接失效
-- 每个流程步骤内置质量检查
+- Git worktree 隔离实现
 
 ### feishu-doc
 
@@ -42,23 +41,28 @@ export FEISHU_APP_SECRET=xxx
 **流程概览：**
 
 ```
-正向开发流程：
-Milestone → User Story → Task → Test Cases → Pull Request
-    │           │          │         │            │
-    │           │          │         │            └── 合并后自动关闭 Task
-    │           │          │         └── 验收用例 (与 Task/User Story 关联)
-    │           │          └── 实现任务 (与 User Story N:1)
-    │           └── 用户故事 (与 Milestone N:1，包含设计内容)
-    └── GitHub 原生里程碑功能
-
-问题修复流程：
-Milestone → Problem → Task → Test Cases → Pull Request
-    │          │         │         │            │
-    │          │         │         │            └── 合并后自动关闭 Task
-    │          │         │         └── 验证通过后关闭 Problem
-    │          │         └── 修复任务 (与 Problem N:1)
-    │          └── 问题报告 (bug/improvement/refactor)
-    └── 可用于专门的修复里程碑
+PRD 文档
+    │
+    ▼
+issue-prd-review ─→ 主 Issue + 技术评估 Comment
+    │
+    ▼ (对每个功能点)
+issue-design ─→ 子 Issue + Design Comment
+    │
+    ▼ (对每个 Task)
+issue-tasks ─→ Task Comment
+    │
+    ▼ (可选)
+issue-test-cases ─→ Test Cases Comment
+    │
+    ▼
+issue-implement ─→ 代码实现
+    │
+    ▼
+issue-pr ─→ Pull Request
+    │
+    ▼
+手动合并 → 手动关闭 Issue
 ```
 
 ## 安装
@@ -93,62 +97,47 @@ claude plugin update dev-skills@dev-skills
 
 | 技能 | 触发条件 | 用途 |
 |------|----------|------|
-| `/issue-workflow` | "研发流程"/"issue 管理" | 查看流程概览 |
-| `/issue-workflow-milestone` | "里程碑"/"新阶段" | 创建 GitHub 里程碑 |
-| `/issue-workflow-problem` | "问题"/"bug"/"改进"/"重构" | 提交 Problem Issue |
-| `/issue-workflow-user-story` | "用户故事"/"我想要..." | 创建用户故事 Issue |
-| `/issue-workflow-design` | 完成 brainstorming 后/"设计文档" | 为 User Story 添加设计内容 |
-| `/issue-workflow-task` | 完成 writing-plans 后/"创建任务" | 创建任务 Issue |
-| `/issue-workflow-test-cases` | 从任务继续/"测试用例" | 创建测试用例 Issue |
-| `/issue-workflow-pull-request` | "创建 PR"/"提交 PR" | 创建关联任务的 PR |
+| `issue-workflow` | "研发流程"/"下一步"/"进度" | 流程概览与状态检测 |
+| `issue-prd-review` | "评审 PRD"/"新需求"/"创建 Issue" | PRD 评审 → 主 Issue + 技术评估 |
+| `issue-design` | "添加设计"/"创建子 Issue" | 创建子 Issue + Design Comment |
+| `issue-tasks` | "添加任务"/"任务拆分" | 添加 Task Comment |
+| `issue-test-cases` | "测试用例"/"验收标准" | 添加 Test Cases Comment |
+| `issue-implement` | "实现"/"开发"/"coding" | 在 worktree 中实现代码 |
+| `issue-pr` | "创建 PR"/"pull request" | 创建关联子 Issue 的 PR |
+| `issue-repo` | (自动调用) | 确定目标仓库 |
+| `feishu-doc` | 飞书链接/"读取飞书文档" | 读取飞书文档为 JSON |
 
 **典型工作流：**
 
-1. **创建里程碑**：为新需求创建里程碑
+1. **PRD 评审**：评审 PRD 并创建主 Issue
    ```
-   /issue-workflow-milestone
-   ```
-
-2. **创建用户故事**：将需求拆分为用户故事
-   ```
-   /issue-workflow-user-story
+   /issue-prd-review
    ```
 
-3. **设计阶段**：使用 brainstorming 完成设计，然后添加到 User Story
+2. **创建子 Issue**：为每个功能点创建子 Issue 并添加设计
    ```
-   /superpowers:brainstorming
-   /issue-workflow-design
-   ```
-
-4. **任务拆分**：使用 writing-plans 编写计划，然后创建 Task Issue
-   ```
-   /superpowers:writing-plans
-   /issue-workflow-task
+   /issue-design
    ```
 
-5. **创建测试用例**：为任务创建验收测试用例
+3. **任务拆分**：添加 Task Comment 描述实现细节
    ```
-   /issue-workflow-test-cases
-   ```
-
-6. **创建 Pull Request**：完成实现后，创建关联任务的 PR
-   ```
-   /issue-workflow-pull-request
+   /issue-tasks
    ```
 
-**问题修复流程：**
-
-1. **提交问题**：发现 bug 或改进点时提交
+4. **测试用例**（可选）：添加验收测试用例
    ```
-   /issue-workflow-problem
+   /issue-test-cases
    ```
 
-2. **设计修复方案**：为问题添加设计
+5. **实现**：在隔离的 worktree 中实现任务
    ```
-   /issue-workflow-design
+   /issue-implement
    ```
 
-3. **后续流程同正向开发**
+6. **创建 PR**：创建关联子 Issue 的 Pull Request
+   ```
+   /issue-pr
+   ```
 
 ## License
 
