@@ -5,24 +5,25 @@
     "email": "guokainan@vastai3d.com"
   },
   "metadata": {
-    "description": "Development workflow skills for issue management",
-    "version": "1.0.0"
+    "description": "PRD-driven development workflow skills",
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "dev-skills",
-      "description": "GitHub Issue-based development workflow management including milestones, user stories, design docs, tasks, and test cases",
+      "description": "PRD-driven development workflow: PRD review → design → tasks → test cases → implement → PR",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/issue-workflow",
-        "./skills/issue-workflow-milestone",
-        "./skills/issue-workflow-user-story",
-        "./skills/issue-workflow-design",
-        "./skills/issue-workflow-task",
-        "./skills/issue-workflow-test-cases",
-        "./skills/issue-workflow-pull-request",
-        "./skills/issue-workflow-problem"
+        "./skills/issue-repo",
+        "./skills/issue-prd-review",
+        "./skills/issue-design",
+        "./skills/issue-tasks",
+        "./skills/issue-test-cases",
+        "./skills/issue-implement",
+        "./skills/issue-pr",
+        "./skills/feishu-doc"
       ]
     }
   ]

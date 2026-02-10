@@ -6,7 +6,7 @@ A collection of Claude Code skills for development workflows.
 
 ## Introduction
 
-Dev Skills is a collection of Claude Code skills for enhancing development workflows. Currently includes the `issue-workflow` skill for GitHub Issue-based development workflow management.
+Dev Skills is a collection of Claude Code skills for enhancing development workflows. Includes `issue-workflow` for GitHub Issue-based development workflow management, and `feishu-doc` for reading Feishu/Lark documents.
 
 ## Skills
 
@@ -21,6 +21,23 @@ GitHub Issue-based development workflow management.
 - Deep integration with [superpowers](https://github.com/anthropics/claude-code-superpowers) skills
 - Permanent links using commit SHA for design docs and implementation plans
 - Built-in quality checks for each workflow step
+
+### feishu-doc
+
+Read Feishu/Lark documents and convert to local JSON format.
+
+**Features:**
+- Parse Feishu document links (docx/docs/wiki)
+- Download images to local `assets/` directory
+- Extract referenced document links
+- Output raw blocks JSON for AI analysis
+- Integrated with `issue-prd-review` for PRD review workflow
+
+**Requirements:**
+```bash
+export FEISHU_APP_ID=cli_xxx
+export FEISHU_APP_SECRET=xxx
+```
 
 **Workflow Overview:**
 

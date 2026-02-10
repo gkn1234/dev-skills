@@ -17,9 +17,11 @@ description: 当用户提供 PRD 文档（飞书链接、文本或本地文件�
 
 | 输入类型 | 处理方式 | 示例 |
 |----------|----------|------|
-| 飞书文档链接 | WebFetch 读取 | `https://xxx.feishu.cn/docs/xxx` |
+| 飞书文档链接 | 调用 `feishu-doc` 技能读取 | `https://xxx.feishu.cn/docx/xxx` |
 | 文本内容 | 直接使用对话中的 PRD 文本 | 用户粘贴的文本 |
 | 本地文件 | Read 工具读取 | `docs/prd/feature-x.md` |
+
+**图片处理**：飞书文档中的图片会下载到 `~/.cache/feishu-docs/{doc_token}/assets/`，分析时应读取这些图片以更好理解 UI 设计和交互需求。
 
 ## 评估流程
 
@@ -146,7 +148,24 @@ gh issue comment $MAIN_ISSUE \
 
 ## 使用示例
 
-**示例 1：评审通过**
+**示例 1：飞书文档评审**
+```
+用户: 帮我评审这个 PRD https://xxx.feishu.cn/docx/Abc123
+
+助手: [调用 issue-repo 确定仓库]
+      仓库: owner/repo
+
+      [调用 feishu-doc 读取文档]
+      文档标题: 用户认证系统 PRD
+      已保存: ~/.cache/feishu-docs/Abc123/document.json
+
+      [读取文档内容，进行技术评估]
+
+      ## 技术评估结论：✅ 通过
+      ...
+```
+
+**示例 2：文本 PRD 评审通过**
 ```
 用户: 帮我评审这个 PRD [粘贴内容]
 
@@ -175,7 +194,7 @@ gh issue comment $MAIN_ISSUE \
       → 下一步：使用 issue-design 为功能点创建子 Issue 并添加设计
 ```
 
-**示例 2：评审不通过**
+**示例 3：评审不通过**
 ```
 用户: 评审这个 PRD [粘贴内容]
 

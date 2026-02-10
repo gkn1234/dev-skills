@@ -6,7 +6,7 @@
 
 ## 简介
 
-Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程。目前包含 `issue-workflow` 技能，帮助团队基于 GitHub Issue 进行规范化的研发流程管理。
+Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程。包含 `issue-workflow` 技能帮助团队基于 GitHub Issue 进行规范化的研发流程管理，以及 `feishu-doc` 技能用于读取飞书文档。
 
 ## Skills
 
@@ -21,6 +21,23 @@ Dev Skills 是一个 Claude Code 技能集合，用于增强开发工作流程�
 - 与 [superpowers](https://github.com/anthropics/claude-code-superpowers) 技能深度集成
 - 使用 commit SHA 生成永久链接，避免分支删除后链接失效
 - 每个流程步骤内置质量检查
+
+### feishu-doc
+
+读取飞书文档并转换为本地 JSON 格式。
+
+**功能特性：**
+- 解析飞书文档链接（docx/docs/wiki）
+- 下载图片到本地 `assets/` 目录
+- 提取引用的文档链接
+- 输出原始 blocks JSON 供 AI 分析
+- 与 `issue-prd-review` 集成，支持 PRD 评审流程
+
+**环境变量配置：**
+```bash
+export FEISHU_APP_ID=cli_xxx
+export FEISHU_APP_SECRET=xxx
+```
 
 **流程概览：**
 

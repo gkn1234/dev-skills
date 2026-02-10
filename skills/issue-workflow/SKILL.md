@@ -1,84 +1,99 @@
 ---
 name: issue-workflow
-description: 当用户提到"研发流程"/"issue 管理"/"项目管理"、或需要了解整体工作流时使用
+description: 当用户提到"研发流程"/"workflow"/"下一步"/"继续"/"进度"、需要了解整体工作流、或询问当前状态时使用。检测 Issue 状态并引导到对应技能。
 ---
 
-# Issue Workflow - 研发流程管理
+# Issue Workflow - PRD 驱动研发流程
 
-## Overview
+## 职责
 
-基于 GitHub Issue 的完整研发流程管理。从里程碑规划到 PR 提交，建立清晰的需求追踪链路。
+检测 Issue 状态，引导用户到对应的下游技能。
 
 ## 流程概览
 
 ```
-正向开发流程：
-Milestone → User Story → Design → Task → Test Cases → Pull Request
-    │           │          │        │         │            │
-    │           │          │        │         │            └── 合并后自动关闭 Task
-    │           │          │        │         └── 验收用例 (与 Task/User Story 关联)
-    │           │          │        └── 实现任务 (与 User Story N:1)
-    │           │          └── 设计内容 (嵌入 User Story)
-    │           └── 用户故事 (与 Milestone N:1)
-    └── GitHub 原生里程碑功能
-
-问题修复流程：
-Milestone → Problem → Design → Task → Test Cases → Pull Request
-    │          │         │        │         │            │
-    │          │         │        │         │            └── 合并后自动关闭 Task
-    │          │         │        │         └── 验证通过后关闭 Problem
-    │          │         │        └── 修复任务 (与 Problem N:1)
-    │          │         └── 修复方案 (嵌入 Problem)
-    │          └── 问题报告 (bug/improvement/refactor)
-    └── 可用于专门的修复里程碑
+PRD 文档
+    │
+    ▼
+issue-prd-review ─→ 主 Issue + 技术评估 Comment
+    │
+    ▼ (对每个功能点)
+issue-design ─→ 子 Issue + Design Comment
+    │
+    ▼ (对每个 Task)
+issue-tasks ─→ Task Comment
+    │
+    ▼ (可选)
+issue-test-cases ─→ Test Cases Comment
+    │
+    ▼
+issue-implement ─→ 代码实现
+    │
+    ▼
+issue-pr ─→ Pull Request
+    │
+    ▼
+手动合并 → 手动关闭 Issue
 ```
 
 ## 技能列表
 
-| 技能 | 触发条件 | 用途 |
+| 技能 | 触发条件 | 产出 |
 |------|----------|------|
-| `issue-workflow-milestone` | "里程碑"/"milestone"/"新阶段" | 创建 GitHub 里程碑 |
-| `issue-workflow-problem` | "问题"/"problem"/"bug"/"改进"/"重构" | 提交 Problem Issue |
-| `issue-workflow-user-story` | "用户故事"/"user story"/"我想要..." | 创建用户故事 Issue |
-| `issue-workflow-design` | 完成 brainstorming 后、"设计文档"/"design" | 为 User Story 添加设计内容 |
-| `issue-workflow-task` | 完成 writing-plans 后、"创建任务"/"task" | 创建任务 Issue |
-| `issue-workflow-test-cases` | 从任务继续、"测试用例"/"test cases" | 创建测试用例 Issue |
-| `issue-workflow-pull-request` | "创建 PR"/"提交 PR"/"pull request" | 创建关联 Task 的 PR |
+| `issue-repo` | 所有技能前置 | 确定 owner/repo |
+| `issue-prd-review` | PRD 文档、"评审"、"新需求" | 主 Issue + 技术评估 |
+| `issue-design` | "设计"、"子 Issue"、从主 Issue 继续 | 子 Issue + Design Comment |
+| `issue-tasks` | "任务"、"task"、从子 Issue 继续 | Task Comment |
+| `issue-test-cases` | "测试用例"、"test cases" | Test Cases Comment |
+| `issue-implement` | "实现"、"开发"、"coding" | 代码 + 本地验证 |
+| `issue-pr` | "创建 PR"、"pull request" | Pull Request |
 
-## 工作流集成
+## 状态检测
 
-| 阶段 | 推荐流程 |
-|------|----------|
-| **规划** | 创建 Milestone → 拆分 User Story |
-| **设计** | `superpowers:brainstorming` → `issue-workflow-design`（更新 User Story） |
-| **计划** | `superpowers:writing-plans` → `issue-workflow-task` |
-| **测试** | `issue-workflow-test-cases` |
-| **提交** | 实现代码 → `issue-workflow-pull-request` |
-| **问题提交** | `issue-workflow-problem` |
-| **问题修复** | `issue-workflow-design` → `issue-workflow-task` → `issue-workflow-test-cases` → `issue-workflow-pull-request` |
+```bash
+# 检测 Issue 的 Comment 类型
+gh api repos/{owner}/{repo}/issues/{issue号}/comments \
+  --jq '[.[] | .body | capture("<!-- type: (?<type>[^,>]+)") | .type] | unique'
+```
 
-## 自动行为
+| 检测结果 | 当前阶段 | 下一步 |
+|----------|----------|--------|
+| 无 Issue | 起点 | `issue-prd-review` |
+| 主 Issue 无 review | PRD 待评审 | `issue-prd-review` |
+| 主 Issue 有 review，无子 Issue | 待拆分功能点 | `issue-design` |
+| 子 Issue 无 design | 待设计 | `issue-design` |
+| 子 Issue 有 design，无 task | 待拆分任务 | `issue-tasks` |
+| 子 Issue 有 task | 待实现 | `issue-implement` |
+| Task 已实现 | 待提 PR | `issue-pr` |
 
-- **标签管理**：自动检查并创建缺失的标签（`user-story`, `task`, `test-cases`, `problem`, `bug`, `improvement`, `refactor`, `severity:*`, `priority:*`）
-- **双向关联**：自动在相关 Issue 间建立双向链接
-- **语言适配**：根据用户对话语言自动选择模板（中/英文）
-- **仓库检测**：优先从 `git remote` 自动检测，失败时询问用户
-- **永久链接**：设计文档和实现计划使用 commit SHA 生成永久链接
+## 使用示例
 
-## 优先级规则
+```
+用户: 我有一个 PRD 需要评审
 
-对于所有输入（milestone, user-story, design, task）：
-1. 优先使用当前对话上下文中的信息
-2. 其次使用命令参数（如 `--milestone 1`、`--task 1,2,3`）
-3. 最后查询 GitHub API 并展示选项列表供选择
+助手: → 使用 issue-prd-review 评审 PRD 并创建主 Issue
+```
 
-## 质量标准
+```
+用户: Issue #100 下一步是什么
 
-每个技能都内置质量检查，确保：
-- **Milestone**：目标明确、范围合理
-- **User Story**：符合 INVEST 原则
-- **Problem**：描述清晰、标签完整、复现步骤明确（BUG 类型）
-- **Design**：有明确目标、技术方案、可拆分任务
-- **Task**：目标明确、1-3 天可完成、有完成标准
-- **Test Cases**：场景明确、预期清晰、可验证
-- **Pull Request**：关联 Task、描述清晰、使用 Closes 关键字
+助手: [检测 #100 状态]
+      主 Issue #100 已有技术评估，建议的功能点：
+      1. 用户登录表单
+      2. JWT 认证服务
+      3. OAuth 集成
+
+      → 使用 issue-design 为功能点创建子 Issue
+```
+
+```
+用户: #101 进度
+
+助手: [检测 #101 状态]
+      子 Issue #101 当前状态：
+      - ✅ Design Comment
+      - ✅ task-1, task-2 (Task Comments)
+      - ⏳ task-1 待实现
+
+      → 使用 issue-implement 实现 task-1
+```
