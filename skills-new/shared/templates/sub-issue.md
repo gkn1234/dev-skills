@@ -6,15 +6,10 @@
 
 {description}
 
-## 🔧 技术要点
-
-- **涉及模块**: {modules}
-- **预估改动**: {scope}
-
 ## ✅ 验收标准
 
 {acceptance_criteria}
 
 ## 🔗 关联
 
-- 父 PRD: #{parent_issue}
+- 父 Issue: #{parent_issue}

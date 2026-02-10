@@ -1,21 +1,28 @@
 ---
 name: issue-workflow
-description: 当用户提到"研发流程"/"开发流程"/"workflow"、或需要了解整体工作流时使用。自动检测当前阶段并引导下一步操作。
+description: 当用户提到"研发流程"/"开发流程"/"workflow"/"下一步"/"继续"/"流程状态"、需要了解整体工作流、或询问当前进度时使用。自动检测 Issue 状态并触发对应技能。
 ---
 
 # Issue Workflow - PRD 驱动研发流程
 
-## Overview
+## 职责
 
-基于 PRD 文档驱动的研发流程管理。自动检测当前阶段，引导下一步操作。
+检测当前 Issue 状态，自动触发对应的下游技能。
+
+## 前置：仓库检测
+
+调用 `issue-repo` 技能确定目标仓库。
 
 ## 流程概览
 
 ```
+issue-repo ─→ 确定目标仓库
+    │
+    ▼
 一无所有
     │
     ▼
-issue-prd-review ─→ 主 Issue + 评估 Comment + 子 Issue(s)
+issue-prd-review ─→ 主 Issue + 子 Issue(s)
     │
     ▼ (对每个子 Issue)
 issue-design ─→ Design Comment
@@ -36,59 +43,61 @@ issue-pr ─→ Pull Request
 手动合并 ─→ 手动关闭 Issue
 ```
 
-## 技能列表
+## 状态检测与技能触发
 
-| 技能 | 触发条件 | 用途 |
-|------|----------|------|
-| `issue-prd-review` | "评审 PRD"/"需求评估"/"review" | PRD 评估与 Issue 创建 |
-| `issue-design` | "添加设计"/"design" | 添加 Design Comment |
-| `issue-tasks` | "添加任务"/"tasks" | 添加 Task Comment |
-| `issue-test-cases` | "添加用例"/"test cases" | 添加 Test Cases Comment |
-| `issue-implement` | "实现"/"implement"/"开发" | 在 worktree 中执行实现 |
-| `issue-pr` | "创建 PR"/"pull request" | 创建 Pull Request |
+### 无 Issue 时
 
-## 状态检测
+| 用户输入 | 触发技能 |
+|----------|----------|
+| 提供 PRD 文档 | → `issue-prd-review` |
+| "开始新需求" | → `issue-prd-review` |
 
-### 第一层：主 Issue 检测
+### 有主 Issue 时
 
-| 状态 | 判断条件 | 下一步 |
-|------|----------|--------|
-| 一无所有 | 无 PRD Issue | → issue-prd-review |
-| 待评估 | 有主 Issue，无评估 Comment | → issue-prd-review（继续评估） |
-| 待拆分 | 有评估 Comment，无子 Issue | → issue-prd-review（创建子 Issues） |
-| 已拆分 | 有子 Issues | → 进入子 Issue 流程 |
-
-### 第二层：子 Issue 检测
-
-| 已有 Comment | 当前阶段 | 下一步 |
-|--------------|----------|--------|
-| 无 | 待设计 | → issue-design |
-| design | 待拆分任务 | → issue-tasks |
-| design, task | 待添加用例 | → issue-test-cases |
-| design, task, test-cases | 待实现 | → issue-implement |
-| 已有 PR | 待合并 | 手动合并 → 手动关闭 Issue |
-
-### 状态检测命令
+检测主 Issue 状态：
 
 ```bash
-# 检测子 Issue 的 Comment 类型
+# 检测是否有评估 Comment
+gh api repos/{owner}/{repo}/issues/{issue号}/comments \
+  --jq '.[] | select(.body | contains("<!-- type: review -->"))' | head -1
+```
+
+| 状态 | 触发技能 |
+|------|----------|
+| 无评估 Comment | → `issue-prd-review`（继续评估） |
+| 有评估，无子 Issue | → `issue-prd-review`（创建子 Issues） |
+| 有子 Issues | → 进入子 Issue 流程 |
+
+### 有子 Issue 时
+
+检测子 Issue 的 Comment 类型：
+
+```bash
 gh api repos/{owner}/{repo}/issues/{issue号}/comments \
   --jq '[.[] | .body | capture("<!-- type: (?<type>[^,>]+)") | .type] | unique'
 ```
 
-## 数据模型
+| 已有 Comment | 触发技能 |
+|--------------|----------|
+| 无 | → `issue-design` |
+| design | → `issue-tasks` |
+| design, task | → `issue-test-cases` |
+| design, task, test-cases | → `issue-implement` |
+| 已有 PR | 提示：手动合并后关闭 Issue |
 
-| 关系 | 说明 |
-|------|------|
-| 主 Issue : 子 Issue | 1 : N（Sub-Issue 关联） |
-| 子 Issue : Design | 1 : 1 |
-| 子 Issue : Task | 1 : N |
-| Task : Test Cases | 1 : 1 |
-| Task : PR | 1 : 1 |
+## 使用示例
 
-## 标签规则
+```
+用户: 我有一个 PRD 需要评审
+助手: [触发 issue-prd-review]
 
-| Issue 类型 | 标签 |
-|------------|------|
-| 主 Issue（PRD） | 无标签 |
-| 子 Issue | `feat` / `fix` / `refactor` |
+用户: Issue #123 下一步
+助手: [检测状态：已有 design]
+      [触发 issue-tasks]
+
+用户: 当前进度？
+助手: 主 Issue #100，3 个子 Issue：
+      - #101: 待设计 → issue-design
+      - #102: 待实现 → issue-implement
+      - #103: 待合并
+```

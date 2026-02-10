@@ -1,11 +1,12 @@
-## 📋 PRD 信息
+## 📋 需求概述
 
-- **来源**: {prd_source}
+{summary}
+
+## 🎯 目标
+
+{goals}
+
+## 📎 PRD 来源
+
+- **文档**: {prd_source}
 - **评审时间**: {review_date}
-
-## 🔗 Sub Issues
-
-```[tasklist]
-### 功能拆分
-{sub_issues_list}
-```
