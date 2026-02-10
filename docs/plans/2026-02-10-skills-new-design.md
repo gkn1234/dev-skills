@@ -50,6 +50,8 @@ skills-new/
 │       ├── task-comment.md        # Task Comment
 │       ├── test-cases-comment.md  # Test Cases Comment
 │       └── pr.md                  # PR 模板
+├── issue-workflow/
+│   └── SKILL.md
 ├── issue-prd-review/
 │   └── SKILL.md
 ├── issue-design/
@@ -67,6 +69,73 @@ skills-new/
 ---
 
 ## 技能设计
+
+### 0. issue-workflow
+
+**职责**：自动串联 PRD 驱动的研发流程，根据当前状态引导下一步操作
+
+```yaml
+name: issue-workflow
+description: 当用户提到"研发流程"/"开发流程"/"workflow"、或需要了解整体工作流时使用。自动检测当前阶段并引导下一步操作。
+```
+
+**流程状态检测**：
+
+第一层：主 Issue 检测
+
+| 状态 | 判断条件 | 下一步 |
+|------|----------|--------|
+| 一无所有 | 无 PRD Issue | → issue-prd-review |
+| 待评估 | 有主 Issue，无评估 Comment | → issue-prd-review（继续评估） |
+| 待拆分 | 有评估 Comment，无子 Issue | → issue-prd-review（创建子 Issues） |
+| 已拆分 | 有子 Issues | → 进入子 Issue 流程 |
+
+第二层：子 Issue 检测
+
+| 已有 Comment | 当前阶段 | 下一步 |
+|--------------|----------|--------|
+| 无 | 待设计 | → issue-design |
+| design | 待拆分任务 | → issue-tasks |
+| design, task | 待添加用例 | → issue-test-cases |
+| design, task, test-cases | 待实现 | → issue-implement |
+| 已有 PR | 待合并 | 手动合并 → 手动关闭 Issue |
+
+**状态检测命令**：
+
+```bash
+# 检测子 Issue 的 Comment 类型
+gh api repos/{owner}/{repo}/issues/{issue号}/comments \
+  --jq '[.[] | .body | capture("<!-- type: (?<type>[^,>]+)") | .type] | unique'
+```
+
+**完整流程图**：
+
+```
+一无所有
+    │
+    ▼
+issue-prd-review ─→ 主 Issue + 评估 Comment + 子 Issue(s)
+    │
+    ▼ (对每个子 Issue)
+issue-design ─→ Design Comment
+    │
+    ▼
+issue-tasks ─→ Task Comment(s)
+    │
+    ▼
+issue-test-cases ─→ Test Cases Comment(s)
+    │
+    ▼ (对每个 Task)
+issue-implement ─→ 代码实现
+    │
+    ▼
+issue-pr ─→ Pull Request
+    │
+    ▼
+手动合并 ─→ 手动关闭 Issue
+```
+
+---
 
 ### 1. issue-prd-review
 
