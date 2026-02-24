@@ -11,7 +11,7 @@ import json
 import requests
 from pathlib import Path
 from typing import Optional
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 CACHE_DIR = Path.home() / ".cache" / "feishu-docs"
 
@@ -196,6 +196,367 @@ def process_blocks(blocks: list, output_dir: Path, token: str) -> tuple[list, li
     return images, doc_links
 
 
+# 飞书代码块语言枚举 -> Markdown 语言标识
+LANG_MAP = {
+    1: "", 2: "abap", 3: "ada", 4: "apache", 5: "apex",
+    6: "asm", 7: "bash", 8: "csharp", 9: "cpp", 10: "c",
+    11: "cobol", 12: "css", 13: "coffeescript", 14: "d", 15: "dart",
+    16: "delphi", 17: "django", 18: "dockerfile", 19: "erlang", 20: "fortran",
+    21: "foxpro", 22: "go", 23: "groovy", 24: "html", 25: "handlebars",
+    26: "http", 27: "haskell", 28: "json", 29: "java", 30: "javascript",
+    31: "julia", 32: "kotlin", 33: "latex", 34: "lisp", 35: "logo",
+    36: "lua", 37: "matlab", 38: "makefile", 39: "markdown", 40: "nginx",
+    41: "objectivec", 42: "openedgeabl", 43: "php", 44: "perl",
+    45: "postscript", 46: "powershell", 47: "prolog", 48: "protobuf",
+    49: "python", 50: "r", 51: "rpg", 52: "ruby", 53: "rust",
+    54: "sas", 55: "scss", 56: "sql", 57: "scala", 58: "scheme",
+    59: "scratch", 60: "shell", 61: "swift", 62: "thrift",
+    63: "typescript", 64: "vbscript", 65: "vb", 66: "xml", 67: "yaml",
+}
+
+# block_type -> block 数据的 key 名
+TYPE_KEY_MAP = {
+    2: "text", 3: "heading1", 4: "heading2", 5: "heading3",
+    6: "heading4", 7: "heading5", 8: "heading6", 9: "heading7",
+    10: "heading8", 11: "heading9", 12: "bullet", 13: "ordered",
+    14: "code", 15: "quote", 17: "todo",
+}
+
+
+def render_elements(elements: list) -> str:
+    """将 block 内的 elements 数组渲染为 Markdown 文本"""
+    parts = []
+    for elem in elements:
+        if "text_run" in elem:
+            tr = elem["text_run"]
+            text = tr.get("content", "")
+            style = tr.get("text_element_style", {})
+
+            # 应用行内样式
+            if style.get("inline_code"):
+                text = f"`{text}`"
+            else:
+                if style.get("bold"):
+                    text = f"**{text}**"
+                if style.get("italic"):
+                    text = f"*{text}*"
+                if style.get("strikethrough"):
+                    text = f"~~{text}~~"
+                if style.get("underline"):
+                    text = f"<u>{text}</u>"
+
+            # 链接
+            link = style.get("link", {})
+            url = link.get("url", "") if link else ""
+            if url:
+                url = unquote(url)
+                text = f"[{tr.get('content', '')}]({url})"
+
+            parts.append(text)
+
+        elif "mention_doc" in elem:
+            mention = elem["mention_doc"]
+            title = mention.get("title", "文档链接")
+            url = mention.get("url", "")
+            if url:
+                parts.append(f"[{title}]({url})")
+            else:
+                parts.append(title)
+
+        elif "equation" in elem:
+            content = elem["equation"].get("content", "")
+            parts.append(f"${content}$")
+
+    return "".join(parts)
+
+
+def fetch_sheet_data(sheet_token: str, token: str) -> str:
+    """获取嵌入表格数据并转为 Markdown 表格"""
+    # sheet_token 格式: {spreadsheetToken}_{sheetId}
+    parts = sheet_token.rsplit("_", 1)
+    if len(parts) != 2:
+        return f"[嵌入表格: token 格式异常 - {sheet_token}]"
+
+    spreadsheet_token, sheet_id = parts
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 获取表格数据
+    url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{spreadsheet_token}/values/{sheet_id}"
+    resp = requests.get(url, headers=headers)
+    resp.raise_for_status()
+    data = resp.json()
+
+    if data.get("code") != 0:
+        return f"[嵌入表格: 获取失败 - {data.get('msg')}]"
+
+    values = data.get("data", {}).get("valueRange", {}).get("values", [])
+    if not values:
+        return "[嵌入表格: 空表格]"
+
+    # 转为 Markdown 表格
+    lines = []
+    # 表头
+    header = values[0]
+    header_cells = [str(c) if c is not None else "" for c in header]
+    lines.append("| " + " | ".join(header_cells) + " |")
+    lines.append("| " + " | ".join(["---"] * len(header_cells)) + " |")
+    # 数据行
+    for row in values[1:]:
+        cells = [str(c) if c is not None else "" for c in row]
+        # 补齐列数
+        while len(cells) < len(header_cells):
+            cells.append("")
+        lines.append("| " + " | ".join(cells) + " |")
+
+    return "\n".join(lines)
+
+
+def blocks_to_markdown(blocks: list, token: str) -> str:
+    """将飞书 blocks 转换为 Markdown"""
+    # 构建 block_id -> block 映射
+    block_map = {b["block_id"]: b for b in blocks if "block_id" in b}
+
+    # 找到根节点 id，只渲染 parent_id == root_id 的 block
+    root_id = blocks[0]["block_id"] if blocks else ""
+
+    lines = []
+    for block in blocks:
+        if block.get("block_type") == 1:
+            continue
+        if block.get("parent_id") != root_id:
+            continue
+        _render_block(block, block_map, token, lines)
+
+    return "\n".join(lines)
+
+
+def _render_block(block: dict, block_map: dict, token: str, lines: list):
+    """渲染单个 block 到 lines 列表"""
+    bt = block.get("block_type")
+
+    # 跳过根节点和表格单元格（由表格处理）
+    if bt in (1, 32):
+        return
+
+    # 标题
+    if 3 <= bt <= 11:
+        level = min(bt - 2, 6)
+        key = TYPE_KEY_MAP.get(bt, "")
+        if key:
+            text = render_elements(block.get(key, {}).get("elements", []))
+            lines.append(f"{'#' * level} {text}")
+            lines.append("")
+        return
+
+    # 普通文本
+    if bt == 2:
+        text = render_elements(block.get("text", {}).get("elements", []))
+        lines.append(text)
+        lines.append("")
+        return
+
+    # 无序列表
+    if bt == 12:
+        text = render_elements(block.get("bullet", {}).get("elements", []))
+        lines.append(f"- {text}")
+        return
+
+    # 有序列表
+    if bt == 13:
+        text = render_elements(block.get("ordered", {}).get("elements", []))
+        lines.append(f"1. {text}")
+        return
+
+    # 代码块
+    if bt == 14:
+        code_data = block.get("code", {})
+        lang_id = code_data.get("style", {}).get("language", 1)
+        lang = LANG_MAP.get(lang_id, "")
+        content = render_elements(code_data.get("elements", []))
+        lines.append(f"```{lang}")
+        lines.append(content)
+        lines.append("```")
+        lines.append("")
+        return
+
+    # 引用（单行）
+    if bt == 15:
+        text = render_elements(block.get("quote", {}).get("elements", []))
+        lines.append(f"> {text}")
+        lines.append("")
+        return
+
+    # Todo
+    if bt == 17:
+        todo_data = block.get("todo", {})
+        text = render_elements(todo_data.get("elements", []))
+        done = todo_data.get("style", {}).get("done", False)
+        checkbox = "[x]" if done else "[ ]"
+        lines.append(f"- {checkbox} {text}")
+        return
+
+    # 分割线
+    if bt == 22:
+        lines.append("---")
+        lines.append("")
+        return
+
+    # 图片
+    if bt == 27:
+        image_data = block.get("image", {})
+        local_path = image_data.get("local_path", "")
+        if local_path:
+            lines.append(f"![image]({local_path})")
+        elif image_data.get("download_error"):
+            lines.append(f"[图片加载失败: {image_data['download_error']}]")
+        else:
+            lines.append("[图片]")
+        lines.append("")
+        return
+
+    # 嵌入表格（sheet）
+    if bt == 30:
+        sheet_data = block.get("sheet", {})
+        st = sheet_data.get("token", "")
+        if st:
+            try:
+                lines.append(fetch_sheet_data(st, token))
+            except Exception as e:
+                lines.append(f"[嵌入表格: 获取失败 - {e}]")
+        else:
+            lines.append("[嵌入表格: 无 token]")
+        lines.append("")
+        return
+
+    # 文档内表格
+    if bt == 31:
+        _render_table(block, block_map, token, lines)
+        return
+
+    # 引用容器（多行引用）
+    if bt == 34:
+        child_lines = []
+        for cid in block.get("children", []):
+            child = block_map.get(cid)
+            if child:
+                _render_block(child, block_map, token, child_lines)
+        for cl in child_lines:
+            lines.append(f"> {cl}" if cl else ">")
+        lines.append("")
+        return
+
+    # 高亮块（callout）
+    if bt == 19:
+        emoji = block.get("callout", {}).get("emoji_id", "")
+        prefix = f"> {emoji} " if emoji else "> "
+        child_lines = []
+        for cid in block.get("children", []):
+            child = block_map.get(cid)
+            if child:
+                _render_block(child, block_map, token, child_lines)
+        for i, cl in enumerate(child_lines):
+            if i == 0 and emoji:
+                lines.append(f"{prefix}{cl}")
+            else:
+                lines.append(f"> {cl}" if cl else ">")
+        lines.append("")
+        return
+
+    # 容器 view（渲染子 block）
+    if bt == 33:
+        for cid in block.get("children", []):
+            child = block_map.get(cid)
+            if child:
+                _render_block(child, block_map, token, lines)
+        return
+
+    # 群聊卡片
+    if bt == 20:
+        lines.append("[群聊卡片]")
+        lines.append("")
+        return
+
+    # 文件
+    if bt == 23:
+        name = block.get("file", {}).get("name", "未知文件")
+        lines.append(f"[文件: {name}]")
+        lines.append("")
+        return
+
+    # 嵌入网页
+    if bt == 26:
+        url = block.get("iframe", {}).get("component", {}).get("url", "")
+        if url:
+            url = unquote(url)
+        lines.append(f"[嵌入网页: {url}]" if url else "[嵌入网页]")
+        lines.append("")
+        return
+
+
+def _render_table(block: dict, block_map: dict, token: str, lines: list):
+    """渲染文档内表格为 Markdown 表格"""
+    table_data = block.get("table", {})
+    prop = table_data.get("property", {})
+    col_size = prop.get("column_size", 1)
+    cell_ids = table_data.get("cells", [])
+
+    # 提取每个单元格的文本内容
+    cell_texts = []
+    for cid in cell_ids:
+        cell_block = block_map.get(cid, {})
+        # 递归渲染单元格内所有子 block
+        cell_lines = []
+        _render_cell_children(cell_block, block_map, token, cell_lines)
+        # 合并为单行，管道符需要转义
+        cell_text = " ".join(l for l in cell_lines if l).replace("|", "\\|")
+        cell_texts.append(cell_text)
+
+    # 按列数切分行
+    rows = [cell_texts[i:i + col_size] for i in range(0, len(cell_texts), col_size)]
+    if not rows:
+        return
+
+    # 表头
+    header = rows[0]
+    while len(header) < col_size:
+        header.append("")
+    lines.append("| " + " | ".join(header) + " |")
+    lines.append("| " + " | ".join(["---"] * col_size) + " |")
+
+    # 数据行
+    for row in rows[1:]:
+        while len(row) < col_size:
+            row.append("")
+        lines.append("| " + " | ".join(row) + " |")
+    lines.append("")
+
+
+def _render_cell_children(block: dict, block_map: dict, token: str, lines: list):
+    """递归渲染表格单元格内的所有内容"""
+    for cid in block.get("children", []):
+        child = block_map.get(cid)
+        if not child:
+            continue
+        ct = child.get("block_type")
+        key = TYPE_KEY_MAP.get(ct)
+
+        # 有文本元素的 block
+        if key and ct not in (14,):
+            text = render_elements(child.get(key, {}).get("elements", []))
+            if text:
+                lines.append(text)
+        elif ct == 14:
+            content = render_elements(child.get("code", {}).get("elements", []))
+            lines.append(f"`{content}`")
+        elif ct == 27:
+            local_path = child.get("image", {}).get("local_path", "")
+            lines.append(f"![image]({local_path})" if local_path else "[图片]")
+
+        # 递归处理子 block 的 children
+        if child.get("children"):
+            _render_cell_children(child, block_map, token, lines)
+
+
 def main():
     if len(sys.argv) < 2:
         print(json.dumps({
@@ -237,14 +598,10 @@ def main():
         # 处理 blocks：下载图片，提取文档链接
         images, doc_links = process_blocks(blocks, output_dir, token)
 
-        # 保存原始 blocks JSON
-        output_file = output_dir / "document.json"
-        doc_data = {
-            "title": title,
-            "doc_token": doc_token,
-            "blocks": blocks
-        }
-        output_file.write_text(json.dumps(doc_data, ensure_ascii=False, indent=2), encoding="utf-8")
+        # 转换为 Markdown 并保存
+        markdown = f"# {title}\n\n" + blocks_to_markdown(blocks, token)
+        output_file = output_dir / "document.md"
+        output_file.write_text(markdown, encoding="utf-8")
 
         # 输出结果
         result = {

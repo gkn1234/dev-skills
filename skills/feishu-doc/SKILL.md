@@ -1,13 +1,13 @@
 ---
 name: feishu-doc
-description: 读取飞书文档链接并输出原始 JSON。当用户提供飞书文档链接、需要读取飞书文档内容、或提到"飞书"/"Feishu"/"lark"时使用。
+description: 读取飞书文档链接并输出 Markdown。当用户提供飞书文档链接、需要读取飞书文档内容、或提到"飞书"/"Feishu"/"lark"时使用。
 ---
 
 # 飞书文档读取
 
 ## 概述
 
-独立技能，读取飞书文档链接并输出原始 blocks JSON，支持图片下载和文档链接提取。
+独立技能，读取飞书文档链接并转换为 Markdown 输出，支持图片下载、嵌入表格转换和文档链接提取。
 
 ## 使用方式
 
@@ -35,12 +35,12 @@ export FEISHU_APP_SECRET=xxx
 ```
 ~/.cache/feishu-docs/
 ├── DocA_xxx/
-│   ├── document.json    # 原始 blocks 数据
+│   ├── document.md     # Markdown 内容
 │   └── assets/
 │       ├── img1.png
 │       └── img2.jpg
 └── DocB_yyy/
-    ├── document.json
+    ├── document.md
     └── assets/
 ```
 
@@ -49,7 +49,7 @@ export FEISHU_APP_SECRET=xxx
 ```json
 {
   "success": true,
-  "output_path": "~/.cache/feishu-docs/Abc123/document.json",
+  "output_path": "~/.cache/feishu-docs/Abc123/document.md",
   "title": "文档标题",
   "images": ["img1.png", "img2.jpg"],
   "referenced_docs": [
@@ -58,23 +58,9 @@ export FEISHU_APP_SECRET=xxx
 }
 ```
 
-## document.json 结构
+## 读取文档内容
 
-```json
-{
-  "title": "文档标题",
-  "doc_token": "Abc123",
-  "blocks": [
-    {
-      "block_id": "xxx",
-      "block_type": 2,
-      "text": { "elements": [...] }
-    }
-  ]
-}
-```
-
-图片 block 会添加 `local_path` 字段指向已下载的本地文件。
+脚本执行后，直接用 Read 工具读取 `output_path` 指向的 Markdown 文件即可。
 
 ## 处理引用文档
 
@@ -83,5 +69,6 @@ export FEISHU_APP_SECRET=xxx
 ## 注意事项
 
 - 图片临时链接有效期 24h
-- 需要应用有「云文档」读取权限
+- 需要应用有「云文档」和「电子表格」读取权限
 - 大文档自动处理 API 分页
+- 嵌入表格自动转为 Markdown 表格
