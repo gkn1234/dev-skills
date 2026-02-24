@@ -33,7 +33,7 @@ description: 当用户提到"创建 PR"/"提交 PR"/"pull request"/"合并代码
 ```bash
 # 读取特定 Task Comment
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '.[] | select(.body | contains("<!-- type: task, id: task-1 -->")) | .body'
+  --jq '.[] | select(.body | test("type: task, id: task-1")) | .body'
 
 # 推送分支到远程
 git push -u origin feat/101-task-1-add-login

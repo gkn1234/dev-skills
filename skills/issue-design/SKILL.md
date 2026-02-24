@@ -44,7 +44,7 @@ gh issue view {主issue号} --repo {owner}/{repo} --json body,title
 
 # 读取技术评估 Comment（含功能点建议）
 gh api repos/{owner}/{repo}/issues/{主issue号}/comments \
-  --jq '.[] | select(.body | contains("<!-- type: review -->")) | .body'
+  --jq '.[] | select(.body | test("type: review")) | .body'
 
 # 创建子 Issue（带标签）
 gh issue create \

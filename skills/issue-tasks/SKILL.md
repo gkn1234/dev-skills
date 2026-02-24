@@ -39,12 +39,12 @@ description: 当用户提到"添加任务"/"tasks"/"创建任务"/"task breakdow
 ```bash
 # 读取 Design Comment
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '.[] | select(.body | contains("<!-- type: design -->")) | .body'
+  --jq '.[] | select(.body | test("type: design")) | .body'
 
 # 检查已存在的 Task Comments（避免重复）
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '[.[] | select(.body | contains("<!-- type: task")) |
-    .body | capture("<!-- type: task, id: (?<id>[^>]+) -->") | .id]'
+  --jq '[.[] | select(.body | test("type: task")) |
+    .body | capture("type: task, id: (?<id>[^ >]+)") | .id]'
 
 # 添加 Task Comment
 gh issue comment {子issue号} \

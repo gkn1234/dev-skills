@@ -39,17 +39,17 @@ description: 当用户提到"添加用例"/"test cases"/"测试用例"/"验收�
 ```bash
 # 获取 Task 列表（仅 ID）
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '[.[] | select(.body | contains("<!-- type: task,")) |
-    .body | capture("<!-- type: task, id: (?<id>[^>]+) -->") | .id]'
+  --jq '[.[] | select(.body | test("type: task,")) |
+    .body | capture("type: task, id: (?<id>[^ >]+)") | .id]'
 
 # 检查已存在的 Test Cases（避免重复）
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '[.[] | select(.body | contains("<!-- type: test-cases")) |
-    .body | capture("<!-- type: test-cases, task-id: (?<id>[^>]+) -->") | .id]'
+  --jq '[.[] | select(.body | test("type: test-cases")) |
+    .body | capture("type: test-cases, task-id: (?<id>[^ >]+)") | .id]'
 
 # 选择后读取特定 Task Comment
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '.[] | select(.body | contains("<!-- type: task, id: task-1 -->")) | .body'
+  --jq '.[] | select(.body | test("type: task, id: task-1")) | .body'
 
 # 添加 Test Cases Comment
 gh issue comment {子issue号} \

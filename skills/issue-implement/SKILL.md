@@ -42,12 +42,12 @@ description: 当用户提到"实现"/"implement"/"开发"/"coding"/"写代码"�
 ```bash
 # 获取 Task 列表（仅 ID）
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '[.[] | select(.body | contains("<!-- type: task,")) |
-    .body | capture("<!-- type: task, id: (?<id>[^>]+) -->") | .id]'
+  --jq '[.[] | select(.body | test("type: task,")) |
+    .body | capture("type: task, id: (?<id>[^ >]+)") | .id]'
 
 # 选择后读取特定 Task Comment
 gh api repos/{owner}/{repo}/issues/{子issue号}/comments \
-  --jq '.[] | select(.body | contains("<!-- type: task, id: task-1 -->")) | .body'
+  --jq '.[] | select(.body | test("type: task, id: task-1")) | .body'
 
 # 创建 worktree
 git worktree add .worktrees/feat-101-task-1-add-login -b feat/101-task-1-add-login

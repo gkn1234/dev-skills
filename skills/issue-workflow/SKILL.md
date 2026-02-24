@@ -53,7 +53,7 @@ issue-pr ─→ Pull Request
 ```bash
 # 检测 Issue 的 Comment 类型
 gh api repos/{owner}/{repo}/issues/{issue号}/comments \
-  --jq '[.[] | .body | capture("<!-- type: (?<type>[^,>]+)") | .type] | unique'
+  --jq '[.[] | .body | capture("type: (?<type>[^,> ]+)") | .type] | unique'
 ```
 
 | 检测结果 | 当前阶段 | 下一步 |
